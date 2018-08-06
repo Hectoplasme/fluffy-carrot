@@ -1,4 +1,23 @@
-/* TYPOGRAPHY */
+/* 
+1 - TYPOGRAPHY
+  1.1 - Headings
+  1.2 - Text & paragraphs
+  1.3 - Links
+  1.4 - Icons
+2 - BUTTONS
+  2.1 - Default button
+  2.2 - Floating button
+3 - FORM
+  3.1 - Base
+  3.2 - Input
+4 - UTILITIES
+  4.1 - Borders
+  4.2 - Media queries
+*/
+
+
+
+/* 1 - TYPOGRAPHY */
 
 html {
   font-size: 12px;
@@ -11,15 +30,12 @@ body {
   word-wrap: break-word;
 }
 
+/* 1.1 - headings */
+
 .heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 {
   margin-top: 1rem;
   margin-bottom: 2rem;
   font-weight: bold;
-}
-
-.text {
-  margin-bottom: 1rem;
-  line-height: 1.5;
 }
 
 .heading-1  {
@@ -43,6 +59,15 @@ body {
   font-size: 2rem;
 }
 
+/* 1.2 - Text & paragraphs*/
+
+.text {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* 1.3 - Link */
+
 .link {
   display: inline-block;
   vertical-align: middle;
@@ -64,13 +89,14 @@ body {
   color: #333;
 }
 
+/* 1.4 - icons */
+
 .link--icon .icon {
   position: relative;
   right: 1rem;
   vertical-align: middle;
-  /* font-size: 2.4rem;
-  line-height: 3.5rem; */
 }
+
 
 .icon-accent {
   color: #0da064;
@@ -81,13 +107,18 @@ body {
   line-height: 3.5rem;
 }
 
-/* BUTTON */
+/* 2 - BUTTON */
+
+/* 2.1 - Default button */
+
 .btn {
   display: inline-block;
   vertical-align: middle;
   background-color: transparent;
   border: none;
 }
+
+/* 2.2 - Floating button */
 
 .btn-floating {
   width: 3.5rem;
@@ -106,12 +137,14 @@ body {
   transition: background-color 0.1s ease-in;
 }
 
-/* FORM */
+/* 3 - FORM */
+/* 3.1 - Base */
 .input-field {
   position: relative;
   margin: 1rem 0.5rem;
 }
 
+/* 3.2 - Input */
 .input-field .icon {
   position: absolute;
   padding: 0 1.2rem;
@@ -137,6 +170,14 @@ body {
 }
 
 /* UTILITIES */
+/* 4.1 - Borders */
 .border-bottom {
   border-bottom: #efefef 1px solid;
+}
+
+/* 4.2 - Media queries */
+@media (max-width:850px) {
+  .hidden-on-mobile {
+      display: none;
+  }
 }

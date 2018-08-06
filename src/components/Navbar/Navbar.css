@@ -21,17 +21,14 @@
 
 
 @media (max-width:850px) {
-    .hidden-on-mobile {
-        display: none;
-    }
-    .link--icon {
+    .navbar .link--icon {
         height: 3.5rem;
         width: 3.5rem;    
         margin: 1rem 0.5rem;
         padding: 0;
         text-align: center;
     }
-    .link--icon .icon {
+    .navbar .link--icon .icon {
         right: 0;
         vertical-align: baseline;
     }
