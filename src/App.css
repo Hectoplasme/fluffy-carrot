@@ -71,6 +71,14 @@ body {
   line-height: 4rem;
 }
 
+.icon-accent {
+  color: #0da064;
+}
+
+.icon-large {
+  font-size: 1.2em;
+}
+
 /* BUTTON */
 .btn {
   background-color: transparent;
@@ -124,3 +132,7 @@ body {
   outline: 0;
 }
 
+/* UTILITIES */
+.border-bottom {
+  border-bottom: #efefef 1px solid;
+}

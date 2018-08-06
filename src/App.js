@@ -18,7 +18,8 @@ class App extends Component {
         <a href="#" className="link">Ceci est un lien </a>
         <a href="#" className="link"><i className="icon fas fa-user-circle"></i>Ceci est un lien avec un icone</a>
         <a href="#" className="link is-active">Ceci est un lien actif</a>
-        <p className="text"><button className="btn btn-floating"><i className="icon fas fa-plus"></i></button></p>
+        <button className="link">Pouet</button>
+        <p className="text"><button className="btn btn-floating"><i className="icon fas fa-plus"></i></button><button className="btn btn-floating"><i className="icon fas fa-plus-circle icon-accent icon-large"></i></button></p>
         <div className="input-field input-field--search">
           <i className="icon fas fa-search"></i>
           <input autoComplete="off" placeholder="Rechercher" className="input" />
