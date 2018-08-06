@@ -7,6 +7,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <Navbar />
         <h1 className="heading-1">Ceci est un titre de niveau 1 </h1>
         <h2 className="heading-2">Ceci est un titre de niveau 2 </h2>
         <h3 className="heading-3">Ceci est un titre de niveau 3 </h3>
@@ -24,7 +25,6 @@ class App extends Component {
           <i className="icon fas fa-search"></i>
           <input autoComplete="off" placeholder="Rechercher" className="input" />
         </div>
-        <Navbar />
       </div>
     );
   }

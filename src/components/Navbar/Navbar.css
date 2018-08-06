@@ -1,0 +1,38 @@
+.navbar {
+    display: flex;
+    padding: 0 1rem;
+}
+
+.navbar-expand {
+    flex-grow: 6;
+}
+
+.navbar-brand .icon{
+    padding: 0.6rem;
+    background-color: #0da064;
+    border-radius: 50%;
+    color: #ffffff;
+}
+
+.navbar-brand:hover .icon {
+    color: #efefef;
+    transition: color 0.1s ease-in;
+}
+
+
+@media (max-width:850px) {
+    .hidden-on-mobile {
+        display: none;
+    }
+    .link--icon {
+        height: 3.5rem;
+        width: 3.5rem;    
+        margin: 1rem 0.5rem;
+        padding: 0;
+        text-align: center;
+    }
+    .link--icon .icon {
+        right: 0;
+        vertical-align: baseline;
+    }
+}

@@ -34,7 +34,7 @@ body {
   font-size: 5rem;
 }
 .heading-4  {
-  font-size: 4rem;
+  font-size: 3.5rem;
 }
 .heading-5  {
   font-size: 3rem;
@@ -45,13 +45,14 @@ body {
 
 .link {
   display: inline-block;
+  vertical-align: middle;
   padding: 0 2rem;
-  margin: 1rem;
+  margin: 1rem 0;
   border-radius: 5rem;
   font-weight: bold;
   color: #838383;
   text-decoration: none;
-  line-height: 4rem;
+  line-height: 3.5rem;
 }
 
 .link:hover {
@@ -63,12 +64,12 @@ body {
   color: #333;
 }
 
-.link .icon {
+.link--icon .icon {
   position: relative;
   right: 1rem;
   vertical-align: middle;
-  font-size: 2.5rem;
-  line-height: 4rem;
+  /* font-size: 2.4rem;
+  line-height: 3.5rem; */
 }
 
 .icon-accent {
@@ -76,23 +77,26 @@ body {
 }
 
 .icon-large {
-  font-size: 1.2em;
+  font-size: 2.6rem;
+  line-height: 3.5rem;
 }
 
 /* BUTTON */
 .btn {
+  display: inline-block;
+  vertical-align: middle;
   background-color: transparent;
   border: none;
 }
 
 .btn-floating {
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   margin: 1rem 0.5rem;
   border-radius: 50%;
   color: #8e8e8e;
   font-size: 1.5rem;
-  line-height: 4rem;
+  line-height: 3.5rem;
   text-align: center;
 }
 
@@ -113,7 +117,7 @@ body {
   padding: 0 1.2rem;
   color: #8e8e8e;
   font-size: 1.8rem;
-  line-height: 4rem;
+  line-height: 3.5rem;
 }
 
 .input-field .input {
@@ -124,7 +128,7 @@ body {
   border-radius: 0.5rem;
   font-size: 1.4rem;
   font-weight: bold;
-  line-height: 4rem;
+  line-height: 3.5rem;
 }
 
 .input-field .input:focus, .btn:focus, .link:focus {
