@@ -1,0 +1,45 @@
+.card {
+    width: 100%;
+    border-radius: 0.5rem;
+    background: transparent;
+    transition: background-color 0.1s ease-in;
+}
+
+@media (min-width:350px) {
+    .card {
+        width: 50%;
+    }
+}
+
+@media (min-width:500px) {
+    .card {
+        width: 33%;
+    }
+}
+
+@media (min-width:850px) {
+    .card {
+        width: 25%;
+    }
+}
+
+.card:hover {
+    cursor: pointer;
+    background: #efefef;
+}
+
+.card-wrapper {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+}
+
+.card-thumbnail {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0.5rem;
+}
+
+.card-title {
+    margin-top: 1rem;
+}

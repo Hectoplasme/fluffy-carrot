@@ -175,6 +175,11 @@ body {
   border-bottom: #efefef 1px solid;
 }
 
+/*4.2 - Typography */
+.bold {
+  font-weight: bold;
+}
+
 /* 4.2 - Media queries */
 @media (max-width:850px) {
   .hidden-on-mobile {

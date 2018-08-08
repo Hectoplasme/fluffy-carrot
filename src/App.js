@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 
 import Navbar from './components/Navbar/Navbar';
-import RecipeCard from './components/RecipeCard/RecipeCard';
+import RecipeList from './components/RecipeList/RecipeList';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <Navbar />
-        <RecipeCard />
+        <RecipeList />
         <h1 className="heading-1">Ceci est un titre de niveau 1 </h1>
         <h2 className="heading-2">Ceci est un titre de niveau 2 </h2>
         <h3 className="heading-3">Ceci est un titre de niveau 3 </h3>
