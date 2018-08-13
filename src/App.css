@@ -13,6 +13,8 @@
 4 - UTILITIES
   4.1 - Borders
   4.2 - Media queries
+5 - LAYOUR
+  5.1 - Container
 */
 
 
@@ -185,4 +187,12 @@ body {
   .hidden-on-mobile {
       display: none;
   }
+}
+
+/* LAYOUT */
+/* 5.1 - Containers */
+.container {
+  width: 90%;
+  margin: auto;
+  max-width: 156rem;
 }
