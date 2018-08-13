@@ -1,4 +1,4 @@
-.card {
+/* .card {
     width: 100%;
     border-radius: 0.5rem;
     background: transparent;
@@ -21,6 +21,12 @@
     .card {
         width: 25%;
     }
+} */
+.card {
+    width: 100%;
+    border-radius: 0.5rem;
+    background: transparent;
+    transition: background-color 0.1s ease-in;
 }
 
 .card:hover {

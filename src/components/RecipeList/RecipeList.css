@@ -1,4 +1,8 @@
 .card-list {
     display: flex;
-    flex-wrap: wrap;
+    width: auto;
+}
+
+.card-column {
+    background-clip: padding-box;
 }
