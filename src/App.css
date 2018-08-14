@@ -80,6 +80,7 @@ body {
   color: #838383;
   text-decoration: none;
   line-height: 3.5rem;
+  outline: 0;
 }
 
 .link:hover {
@@ -118,6 +119,7 @@ body {
   vertical-align: middle;
   background-color: transparent;
   border: none;
+  outline: 0;
 }
 
 /* 2.2 - Floating button */
@@ -138,6 +140,8 @@ body {
   background-color: #efefef;
   transition: background-color 0.1s ease-in;
 }
+
+
 
 /* 3 - FORM */
 /* 3.1 - Base */
@@ -166,10 +170,18 @@ body {
   line-height: 3.5rem;
 }
 
-.input-field .input:focus, .btn:focus, .link:focus {
+.input-field .input:focus, .btn:not(.navbar-brand):focus, .link:focus {
+  background: #efefef;
   box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.5);
   outline: 0;
 }
+
+.btn.is-active:focus, .link.is-active:focus {
+  background: transparent;
+  box-shadow: none;
+  outline: 0;
+}
+
 
 /* UTILITIES */
 /* 4.1 - Borders */
