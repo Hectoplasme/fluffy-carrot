@@ -7,7 +7,7 @@ class Home extends Component {
   render() {
     return (
       <div className="main main-home">
-        <RecipeList />
+        <RecipeList data={this.props.data}/>
       </div>
     );
   }

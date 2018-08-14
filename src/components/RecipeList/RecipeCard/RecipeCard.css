@@ -1,27 +1,3 @@
-/* .card {
-    width: 100%;
-    border-radius: 0.5rem;
-    background: transparent;
-    transition: background-color 0.1s ease-in;
-}
-
-@media (min-width:350px) {
-    .card {
-        width: 50%;
-    }
-}
-
-@media (min-width:500px) {
-    .card {
-        width: 33%;
-    }
-}
-
-@media (min-width:850px) {
-    .card {
-        width: 25%;
-    }
-} */
 .card {
     width: 100%;
     border-radius: 0.5rem;

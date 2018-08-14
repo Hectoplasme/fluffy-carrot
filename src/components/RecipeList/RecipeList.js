@@ -15,26 +15,17 @@ class RecipeList extends Component {
 			850 : 2,
 			500: 1
 		};
+
+		console.log(this.props.data);
 		return (
-			<div class="container">
+			<div className="container">
 				<Masonry 
 					breakpointCols={breakpointColumnsObj} 
 					className={`${this.props.className || ""} card-list`}
 					columnClassName="card-column">
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
-						<RecipeCard />
+					 {this.props.data.recipes.map((item) => {
+						 return <RecipeCard key={item.id} {...item} />
+					 })}
 				</Masonry>
 			</div>
 		);

@@ -1,22 +1,24 @@
 import React, { Component } from 'react';
+import sizeMe from 'react-sizeme';
+
+//CSS
 import './RecipeCard.css';
-import imgUrl1 from "../../../images/placeholder_1.JPG";
-import imgUrl2 from "../../../images/placeholder_4.jpg";
-import imgUrl3 from "../../../images/placeholder_3.JPG";
 
 
 class RecipeCard extends Component {
   render() {
-    const random = Math.floor(Math.random() * 100);
+    const { width } = this.props.size;
+    const height = (width - 10) * this.props.height / this.props.width;
+    
     return (
       <div className={`${this.props.className || ""} card`}>
         <a href="#" className="card-wrapper">
-          <img className="card-thumbnail" src={random > 50 ? imgUrl1: random < 25 ? imgUrl2 : imgUrl3} alt=""/>
-          <p className="card-title bold">Pâtes à la carbonara</p>
+          <img className="card-thumbnail" height={height} src={this.props.imgUrl} alt=""/>
+          <p className="card-title bold">{this.props.title}</p>
         </a>
       </div>
     );
   }
 }
 
-export default RecipeCard;
+export default sizeMe()(RecipeCard);
