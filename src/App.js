@@ -71,7 +71,21 @@ const data = {
       height: 400,
       width: 200
     },
-]
+  ],
+  users : [
+    {
+      id: "user-1",
+      avatar: "https://picsum.photos/400/400/?random",
+      username: "Studio Pouet",
+      recipes: ["recipe-1", "recipe-2", "recipe-4"]
+    },
+    {
+      id: "user-2",
+      avatar: "https://picsum.photos/500/400/?random",
+      username: "Fluffy Carrot",
+      recipes: ["recipe-1", "recipe-3", "recipe-6"]
+    }
+  ]
 }
 
 class App extends Component {
@@ -84,7 +98,9 @@ class App extends Component {
           <Route exact path="/"  render={ (props) => (
             <Home data={data} />
           )}/>
-          <Route path="/profile" component={Profil} />
+          <Route path="/:id" render={(props) => (
+            <Profil data={data} {...props} />
+          )} />
         </div>
       </Router>
     );

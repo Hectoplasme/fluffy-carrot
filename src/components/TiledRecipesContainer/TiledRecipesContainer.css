@@ -1,12 +1,26 @@
 .tiled-header {
   position: relative;
   height: 30rem;
-  /* background: #efefef; */
+  overflow: hidden;
+  /* background: pink; */
 }
 
 .tile-wrapper {
-  width: 100%;
-  height: 100%;
+  position: relative;
+  top: -200%;
+  left: -10%;
+  width: 150%;
+  height: 500%;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
+  transform: rotate(-25deg);
+}
+
+.tile:nth-of-type(7n + 1) {
+  margin-top: -8rem;
+  margin-bottom: 0.5rem;
+}
+.tile:nth-of-type(14n + 1) {
+  margin: 0.5rem;
 }

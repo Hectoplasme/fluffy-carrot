@@ -6,7 +6,10 @@ import './Tile.css'
 class Tile extends Component {
   render() {
     return (
-      <div className="tile">
+      <div className="tile" style={{
+        background: this.props.img ? `#efefef url(${this.props.img})` : "#efefef",
+        backgroundSize: "cover"
+      }}>
       </div>
     );
   }
