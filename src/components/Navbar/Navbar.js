@@ -17,7 +17,7 @@ class Navbar extends Component {
         </Link>
         <SearchBox className="navbar-item navbar-expand"/>
         <NavLink exact={true} to="/" className="link hidden-on-mobile" activeClassName="is-active">Accueil</NavLink>
-        <NavLink to="/profile" className="link link--icon" activeClassName="is-active">
+        <NavLink to="/user-1" className="link link--icon" activeClassName="is-active">
           <i className="icon icon-large fas fa-user-circle"></i><span className="hidden-on-mobile">Mes recettes</span>
         </NavLink>
         <a href="#" className="navbar-item btn btn-floating">

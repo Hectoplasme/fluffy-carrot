@@ -21,7 +21,7 @@ class TiledRecipesContainer extends Component {
   getImgUrl() {
     let recipes = [];
 
-    //Get all the recipes Url
+    //Get all the recipes Url from the id references 
     this.props.recipes.map((recipeID) => {
       const recipeFound = this.props.data.find( recipe => recipe.id === recipeID);
       recipes.push(recipeFound.imgUrl);

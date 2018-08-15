@@ -29,7 +29,7 @@ html {
 body {
   font-size: 1.3rem;
   color: #333;
-  word-wrap: break-word;
+  /* word-wrap: break-word; */
 }
 
 /* 1.1 - headings */

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 //Components
-import TiledRecipesContainer from '../../components/TiledRecipesContainer/TilesRecipesContainer';
+import ProfileHeader from '../../components/ProfileHeader/ProfileHeader';
 
 class Profile extends Component {
   constructor(props) {
@@ -20,10 +20,9 @@ class Profile extends Component {
   render() {
     return (
       <div className="main main-profile">
-        <TiledRecipesContainer 
+        <ProfileHeader 
           data={this.props.data.recipes} 
-          recipes={this.state.user.recipes}/>
-        <h1 className="heading-1">{this.state.user.username}</h1>
+          user={this.state.user} />
       </div>
     );
   }
