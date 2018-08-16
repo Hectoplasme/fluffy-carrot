@@ -1,0 +1,15 @@
+.profile-title .btn {
+  position: relative;
+  float: right;
+  margin: auto 0;
+}
+
+.profile-title .heading {
+  width: 70%;
+  float: left;
+  margin: auto 0;
+}
+
+.profile-title {
+  padding-left: 1rem;
+}

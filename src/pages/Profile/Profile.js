@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 
+//CSS
+import "./Profile.css";
+
 //Components
 import ProfileHeader from '../../components/ProfileHeader/ProfileHeader';
+import SubNav from '../../components/SubNav/SubNav';
+
+//Template parts
+import ProfileOverview from './ProfileOverview/ProfileOverview';
 
 class Profile extends Component {
   constructor(props) {
@@ -23,6 +30,12 @@ class Profile extends Component {
         <ProfileHeader 
           data={this.props.data.recipes} 
           user={this.state.user} />
+        <SubNav />
+        <div className="container--thin">
+          <ProfileOverview 
+            recipes={this.props.data.recipes}
+            user={this.state.user} />
+        </div>
       </div>
     );
   }

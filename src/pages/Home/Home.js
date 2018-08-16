@@ -7,7 +7,9 @@ class Home extends Component {
   render() {
     return (
       <div className="main main-home">
-        <RecipeList data={this.props.data}/>
+        <div className="container">
+          <RecipeList recipes={this.props.data.recipes}/>
+        </div>
       </div>
     );
   }

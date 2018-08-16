@@ -1,8 +1,15 @@
 .card-list {
     display: flex;
     width: auto;
+    padding: 2rem 1rem;
 }
 
 .card-column {
     background-clip: padding-box;
+}
+
+@media (max-width: 500px) {
+    .card-list {
+        padding: 2rem 0;
+    }
 }
