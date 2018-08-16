@@ -9,7 +9,7 @@ class InfosUserHeader extends Component {
     return (
       <div className="profile-infos">
         <div className="avatar--big" style={{
-          background: `url(${this.props.avatar})`,
+          background: `#efefef url(${this.props.avatar})`,
           backgroundSize: "cover"
         }}></div>
         <div className="infos-content">

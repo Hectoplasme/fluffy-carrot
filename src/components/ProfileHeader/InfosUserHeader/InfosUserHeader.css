@@ -2,16 +2,16 @@
   position: relative;
   z-index: 2;
   width: 90%;
-  max-width: 80rem;
+  max-width: 70rem;
   margin: -7rem auto 2rem;  
 }
 
 .avatar--big {
   display: inline-block;
-  height: 17rem;
-  width: 17rem;
+  height: 21rem;
+  width: 21rem;
   border-radius: 50%;
-  border: white 6px solid;
+  border: white 1rem solid;
 }
 
 @media (max-width: 750px) {
@@ -22,6 +22,7 @@
   .avatar--big {
     height: 12rem;
     width: 12rem;
+    border: white 0.5rem solid;
   }
 
 }
@@ -29,7 +30,7 @@
 .infos-content {
   display: inline-block;
   vertical-align: top;
-  width: calc(100% - 17rem);
+  width: calc(100% - 21rem);
   margin-top: 8rem;
   padding-left: 1rem;
 }
@@ -39,7 +40,7 @@
 }
 .infos-list {
   display: block;
-  min-width:  calc(100vw - 17rem);
+  min-width: 11rem;
 }
 .infos-list-item {
   display: inline-block;

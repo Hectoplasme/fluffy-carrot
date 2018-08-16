@@ -13,6 +13,7 @@
 4 - UTILITIES
   4.1 - Borders
   4.2 - Media queries
+  4.3 - float
 5 - LAYOUR
   5.1 - Container
 */
@@ -194,6 +195,11 @@ body {
   font-weight: bold;
 }
 
+/*4.3 - float */
+.clear {
+  clear: both;
+}
+
 /* 4.2 - Media queries */
 @media (max-width:850px) {
   .hidden-on-mobile {
@@ -207,4 +213,10 @@ body {
   width: 90%;
   margin: auto;
   max-width: 156rem;
+}
+
+.container--thin {
+  width: 90%;
+  margin: auto;
+  max-width: 68rem;
 }
