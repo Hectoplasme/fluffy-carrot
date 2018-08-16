@@ -45,7 +45,7 @@ class ProfileOverview extends Component {
           <p className="heading heading-6">Tableaux les plus récents</p>
           <a href="#" className="btn btn-floating"><i className="icon icon-large fas fa-chevron-right"></i></a>
         </div>
-        <BoardList />
+        <BoardList recipes={this.state.recipes} boards={this.props.user.boards}/>
       </div>
     );
   }

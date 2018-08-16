@@ -5,7 +5,6 @@ import './InfosUserHeader.css'
 
 class InfosUserHeader extends Component {
   render() {
-    console.log(this.props.data);
     return (
       <div className="profile-infos">
         <div className="avatar--big" style={{
