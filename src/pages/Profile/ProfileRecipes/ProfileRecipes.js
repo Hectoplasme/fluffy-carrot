@@ -7,9 +7,8 @@ import RecipeList from "../../../components/RecipeList/RecipeList";
 class ProfileRecipes extends Component {
   render() {
     return (
-      <div className="profile-recipes-list clear">
+      <div className="profile-recipes-list container">
         <RecipeList 
-          thin 
           recipes={this.props.recipes} />
       </div>
     );

@@ -1,9 +1,11 @@
 .board-card {
   display: inline-block;
   position: relative;
-  width: 49%;
+  width: 100%;
+  /* max-width: 30rem; */
   padding: 0.8rem;
 }
+
 .board-card:after {
   content: "";
   display: block;
@@ -32,3 +34,37 @@
 .board-title {
   margin-bottom: 0.3rem;
 }
+
+/* @media (max-width: 400px) {
+  .board-card {
+    width: 100%;
+  }
+} */
+
+@media (min-width: 650px) {
+  .board-card {
+    width: 48%;
+    margin-left: 2%;
+  }
+}
+
+
+@media (min-width: 1200px) {
+  .container:not(.container--thin) .board-card {
+    width: 31%;
+    margin-left: 1rem;
+  }
+}
+
+
+@media (min-width: 1500px) {
+  .container:not(.container--thin) .board-card {
+    width: 24%;
+  }
+}
+
+/* @media (min-width: 1800px) {
+  .board-card {
+    width: 19%;
+  }
+} */

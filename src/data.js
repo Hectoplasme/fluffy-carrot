@@ -74,6 +74,31 @@ const data = {
           name: "Recettes de risotto",
           recipes: ["recipe-4"]
         },
+        {
+          id: "board-3",
+          name: "Recettes de risotto",
+          recipes: ["recipe-4"]
+        },
+        {
+          id: "board-4",
+          name: "Recettes de risotto",
+          recipes: ["recipe-4"]
+        },
+        {
+          id: "board-5",
+          name: "Recettes de risotto",
+          recipes: ["recipe-4"]
+        },
+        {
+          id: "board-6",
+          name: "Recettes de risotto",
+          recipes: ["recipe-4"]
+        },
+        {
+          id: "board-7",
+          name: "Recettes de risotto",
+          recipes: ["recipe-4"]
+        },
       ],
       subscriptions: ["user-2"],
       subscribers: ["user-2", "user-3"]

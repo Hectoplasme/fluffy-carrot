@@ -54,7 +54,6 @@ class Profile extends Component {
           user={this.state.user} />
         <SubNav id={this.state.user.id}/>
 
-        <div className="container--thin">
           <Route exact path="/:id" render={(props) => (
             <ProfileOverview 
               recipes={this.state.dataRecipes}
@@ -85,7 +84,6 @@ class Profile extends Component {
           )} />
 
 
-        </div>
         
       </div>
     );

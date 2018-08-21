@@ -10,7 +10,7 @@ import BoardList from "../../../components/BoardList/BoardList";
 class ProfileOverview extends Component {
   render() {
     return (
-      <div className="profile-overview">
+      <div className="profile-overview container container--thin">
         <div className="profile-title">
           <p className="heading heading-6">Recettes les plus récentes</p>
           <a href="#" className="btn btn-floating"><i className="icon icon-large fas fa-chevron-right"></i></a>
