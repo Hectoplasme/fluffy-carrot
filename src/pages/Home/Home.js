@@ -5,6 +5,7 @@ import RecipeList from '../../components/RecipeList/RecipeList';
 
 class Home extends Component {
   render() {
+    console.log(this.props);
     return (
       <div className="main main-home">
         <div className="container">
