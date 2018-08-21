@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
-import './RecipeList.css';
-import RecipeCard from './RecipeCard/RecipeCard';
 
+//CSS
+import './RecipeList.css';
+
+//Components
 import Masonry from 'react-masonry-css';
+import RecipeCard from './RecipeCard/RecipeCard';
+import AddButton from '../AddButton/AddButton';
+
 
 
 class RecipeList extends Component {
@@ -15,14 +20,21 @@ class RecipeList extends Component {
 			850 : 2,
 			500: 1
 		};
-
+		const items = this.props.addEnable ? [{id: "add"}, ...this.props.recipes] : [...this.props.recipes];
+	
+		console.log(items);
 		return (
 			<Masonry 
 				breakpointCols={breakpointColumnsObj} 
 				className={`${this.props.className || ""} card-list clear`}
 				columnClassName="card-column">
-					{this.props.recipes.map((item) => {
-						return <RecipeCard key={item.id} {...item} />
+					
+					{items.map((item) => {
+						if (item.id==="add") {
+							return <AddButton />
+						} else {
+							return <RecipeCard key={item.id} {...item} />
+						}
 					})}
 			</Masonry>
 		);

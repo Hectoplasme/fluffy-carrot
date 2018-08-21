@@ -9,6 +9,7 @@ class ProfileRecipes extends Component {
     return (
       <div className="profile-recipes-list container">
         <RecipeList 
+          addEnable
           recipes={this.props.recipes} />
       </div>
     );

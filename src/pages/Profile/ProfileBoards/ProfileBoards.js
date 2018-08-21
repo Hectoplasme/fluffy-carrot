@@ -8,6 +8,7 @@ class ProfileBoards extends Component {
     return (
       <div className="profile-board-list container">
         <BoardList 
+          addEnable
           recipes={this.props.recipes} 
           boards={this.props.user.boards}/>
       </div>

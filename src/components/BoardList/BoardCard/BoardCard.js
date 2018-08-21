@@ -39,7 +39,7 @@ class BoardCard extends Component {
 
   render() {
     return (
-      <a href="#" className="board-card">
+      <a href="#" className="board-card board-item">
         <div className="board-preview">
           {this.state.recipes.map((imgUrl, i) => {
             return <BoardTile key={`board-tile-${i}`} imgUrl={imgUrl} />

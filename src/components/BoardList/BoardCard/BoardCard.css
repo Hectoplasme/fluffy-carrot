@@ -1,4 +1,4 @@
-.board-card {
+.board-item {
   display: inline-block;
   position: relative;
   width: 100%;
@@ -35,14 +35,8 @@
   margin-bottom: 0.3rem;
 }
 
-/* @media (max-width: 400px) {
-  .board-card {
-    width: 100%;
-  }
-} */
-
 @media (min-width: 650px) {
-  .board-card {
+  .board-item {
     width: 48%;
     margin-left: 2%;
   }
@@ -50,7 +44,7 @@
 
 
 @media (min-width: 1200px) {
-  .container:not(.container--thin) .board-card {
+  .container:not(.container--thin) .board-item {
     width: 31%;
     margin-left: 1rem;
   }
@@ -58,13 +52,7 @@
 
 
 @media (min-width: 1500px) {
-  .container:not(.container--thin) .board-card {
+  .container:not(.container--thin) .board-item {
     width: 24%;
   }
 }
-
-/* @media (min-width: 1800px) {
-  .board-card {
-    width: 19%;
-  }
-} */
