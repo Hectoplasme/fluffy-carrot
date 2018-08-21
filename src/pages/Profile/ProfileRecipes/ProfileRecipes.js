@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 
-//CSS
-import './ProfileRecipes.css'
+//Components
+import RecipeList from "../../../components/RecipeList/RecipeList";
+
 
 class ProfileRecipes extends Component {
   render() {
     return (
-      <div className="board-list clear">
-        Recipes
+      <div className="profile-recipes-list clear">
+        <RecipeList 
+          thin 
+          recipes={this.props.recipes} />
       </div>
     );
   }

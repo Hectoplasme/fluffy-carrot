@@ -11,7 +11,10 @@ class BoardList extends Component {
     return (
       <div className="board-list clear">
         {this.props.boards.map(board => {
-          return <BoardCard key={board.id} board={board} recipes={this.props.recipes}/>
+          return <BoardCard 
+                    key={board.id} 
+                    board={board}
+                    recipes={this.props.recipes}/>
         })}
       </div>
     );

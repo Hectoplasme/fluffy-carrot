@@ -22,10 +22,10 @@ class TiledRecipesContainer extends Component {
     let recipes = [];
 
     //Get all the recipes Url from the id references 
-    this.props.recipes.map((recipeID) => {
-      const recipeFound = this.props.data.find( recipe => recipe.id === recipeID);
-      recipes.push(recipeFound.imgUrl);
+    this.props.recipes.map((recipe) => {
+      recipes.push(recipe.imgUrl);
     })
+
 
     //Check if the recipes array is long enough to fill the header
     if (recipes.length > 260) {
