@@ -14,8 +14,10 @@
   4.1 - Borders
   4.2 - Media queries
   4.3 - float
-5 - LAYOUR
+5 - LAYOUT
   5.1 - Container
+6 - IMAGES
+  6.1 - Avatar
 */
 
 
@@ -118,9 +120,17 @@ body {
 .btn {
   display: inline-block;
   vertical-align: middle;
-  background-color: transparent;
+  padding: 1rem 1.2rem;
+  background-color: #efefefe3;
   border: none;
+  border-radius: 0.5rem;
   outline: 0;
+  font-weight: bold;
+}
+
+.btn--accent {
+  background: #0da064;
+  color: #fff;
 }
 
 /* 2.2 - Floating button */
@@ -129,6 +139,8 @@ body {
   width: 3.5rem;
   height: 3.5rem;
   margin: 1rem 0.5rem;
+  background-color: transparent;
+  padding: 0;
   border-radius: 50%;
   color: #8e8e8e;
   font-size: 1.5rem;
@@ -219,4 +231,31 @@ body {
   width: 90%;
   margin: auto;
   max-width: 68rem;
+}
+
+/* IMAGES */
+/* 6.1 - Avatar */
+
+.avatar {
+  display: inline-block;
+  height: 8rem;
+  width: 8rem;
+  border-radius: 50%;
+}
+
+.avatar--big {
+  display: inline-block;
+  height: 21rem;
+  width: 21rem;
+  border-radius: 50%;
+  border: white 1rem solid;
+}
+
+@media (max-width: 750px) {
+  .avatar--big {
+    height: 12rem;
+    width: 12rem;
+    border: white 0.5rem solid;
+  }
+
 }

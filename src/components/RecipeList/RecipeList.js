@@ -31,7 +31,7 @@ class RecipeList extends Component {
 					
 					{items.map((item) => {
 						if (item.id==="add") {
-							return <AddButton />
+							return <AddButton key="add-recipe" />
 						} else {
 							return <RecipeCard key={item.id} {...item} />
 						}

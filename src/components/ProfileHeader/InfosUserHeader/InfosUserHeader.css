@@ -6,25 +6,10 @@
   margin: -7rem auto 2rem;  
 }
 
-.avatar--big {
-  display: inline-block;
-  height: 21rem;
-  width: 21rem;
-  border-radius: 50%;
-  border: white 1rem solid;
-}
-
 @media (max-width: 750px) {
   .profile-infos {
     margin-top: -6rem;
   }
-
-  .avatar--big {
-    height: 12rem;
-    width: 12rem;
-    border: white 0.5rem solid;
-  }
-
 }
 
 .infos-content {
