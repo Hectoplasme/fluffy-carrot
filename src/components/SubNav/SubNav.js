@@ -27,12 +27,12 @@ class SubNav extends Component {
           exact={true} 
           to={`/${this.props.id}/subscribers`} 
           className="link subnav-item" 
-          activeClassName="is-active">Abonnements</NavLink>
+          activeClassName="is-active">Abonnés</NavLink>
         <NavLink 
           exact={true} 
           to={`/${this.props.id}/subscriptions`} 
           className="link subnav-item" 
-          activeClassName="is-active">subscriptions</NavLink>
+          activeClassName="is-active">Abonnements</NavLink>
 
       </div>
     );

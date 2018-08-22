@@ -114,7 +114,7 @@ const data = {
     },
     {
       id: "user-3",
-      avatar: "https://picsum.photos/500/400/?random",
+      avatar: "https://picsum.photos/500/500/?random",
       username: "Isidore the turtle",
       recipes: ["recipe-1", "recipe-2", "recipe-5", "recipe-6"],
       boards: [],

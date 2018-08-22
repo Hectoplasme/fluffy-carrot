@@ -10,10 +10,9 @@ class UserList extends Component {
   render() {
     return (
       <div className="user-list">
-        <UserItem />
-        <UserItem />
-        <UserItem />
-        <UserItem />
+        {this.props.users.map((user, i) => {
+          return <UserItem key={`sub-${i}`} {...user} />
+        })}
       </div>
     );
   }

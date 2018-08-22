@@ -20,11 +20,15 @@ class Profile extends Component {
     super(props);
     this.state = {
       user : this.getProfileUser(this.props.match.params.id),
-      dataRecipes : this.getUserRecipes()
+      dataRecipes : this.getUserRecipes(),
+      dataSubscribers : this.getUserSubscribers(),
+      dataSubscriptions : this.getUserSubscriptions()
     }
 
     this.getProfileUser = this.getProfileUser.bind(this);
     this.getUserRecipes = this.getUserRecipes.bind(this);
+    this.getUserSubscribers = this.getUserSubscribers.bind(this);
+    this.getUserSubscriptions = this.getUserSubscriptions.bind(this);
 
   }
 
@@ -35,7 +39,7 @@ class Profile extends Component {
   getUserRecipes() {
     let recipes = [];
 
-    //Get all the recipes Url from the id references 
+    //Get all the recipes Objects Items from the id references 
     this.getProfileUser(this.props.match.params.id).recipes.map((recipeID, i) => {
       if (i < 18) {
         const recipeFound = this.props.data.recipes.find( recipe => recipe.id === recipeID);
@@ -44,6 +48,34 @@ class Profile extends Component {
     })
 
     return recipes;
+  }
+
+  getUserSubscribers() {
+    let subscribers = [];
+
+    //Get all the subscribers Objects Items from the id references 
+    this.getProfileUser(this.props.match.params.id).subscribers.map((userID, i) => {
+      
+        const userFound = this.props.data.users.find( user => user.id === userID);
+        subscribers.push(userFound);
+      
+    })
+
+    return subscribers;
+  }
+  
+  getUserSubscriptions() {
+    let subscriptions = [];
+
+    //Get all the subscriptions Objects Items from the id references 
+    this.getProfileUser(this.props.match.params.id).subscriptions.map((userID, i) => {
+      
+        const userFound = this.props.data.users.find( user => user.id === userID);
+        subscriptions.push(userFound);
+      
+    })
+
+    return subscriptions;
   }
 
   render() {
@@ -76,11 +108,15 @@ class Profile extends Component {
           )} />
 
           <Route path="/:id/subscribers" render={(props) => (
-            <ProfileSubscribers />
+            <ProfileSubscribers 
+              users={this.state.dataSubscribers}
+              {...props}/>
           )} />
 
           <Route path="/:id/subscriptions" render={(props) => (
-            <ProfileSubscriptions />
+            <ProfileSubscriptions 
+              users={this.state.dataSubscriptions}
+              {...props} />
           )} />
 
 
