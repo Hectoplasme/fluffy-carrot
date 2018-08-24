@@ -12,7 +12,7 @@ class RecipeToolbar extends Component {
             <i className="icon icon-large fas fa-chevron-left"></i>
             <span className="link-back-text"> Accueil</span>
           </a>
-          <div class="recipe-toolbar-icons">
+          <div className="recipe-toolbar-icons">
             <button className="btn btn-floating">
               <i className="icon fas fa-pen"></i>
             </button>
