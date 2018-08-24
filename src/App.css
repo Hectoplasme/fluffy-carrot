@@ -272,6 +272,11 @@ body {
   border-radius: 50%;
 }
 
+.avatar--small {
+  height: 5rem;
+  width: 5rem;
+}
+
 .avatar--big {
   display: inline-block;
   height: 21rem;
@@ -285,6 +290,12 @@ body {
     height: 12rem;
     width: 12rem;
     border: white 0.5rem solid;
+  }
+
+  
+  .avatar--small {
+    height: 3rem;
+    width: 3rem;
   }
 
 }

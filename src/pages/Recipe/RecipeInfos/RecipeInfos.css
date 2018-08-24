@@ -1,0 +1,12 @@
+.recipe-infos {
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.recipe-infos-items {
+  margin-bottom: 1rem;
+}
+
+.recipe-infos-items .icon{
+  margin-right: 0.5rem;
+}
