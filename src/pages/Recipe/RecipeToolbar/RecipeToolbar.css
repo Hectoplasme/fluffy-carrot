@@ -1,0 +1,52 @@
+.link-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  margin: 2rem;
+  padding: 0.5rem 1.5rem;
+  color: #333;
+  font-size: 1.6rem;
+}
+
+.link-back:hover {
+  cursor: pointer;
+  background: #3333330e;
+}
+
+.link-back .icon {
+  margin-right: 1rem;
+}
+
+.recipe-toolbar-icons {
+  display: inline-block;
+}
+
+@media (max-width: 850px) {
+  .link-back {
+    position: relative;
+    margin: 1rem 0.5rem;
+    font-size: 1.4rem;
+  }
+
+  .link-back .icon {
+    font-size: 2rem;
+  }
+
+  .recipe-toolbar-icons {
+   float: right;
+   padding-top: 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .link-back-text {
+    display: none;
+  }
+
+  .link-back {
+    padding: 0 0.3rem 0 0.9rem;
+    margin: 1.3rem 0;
+  }
+}

@@ -8,7 +8,7 @@ class UserItem extends Component {
     return (
       <div className="user-item">
         <div class="avatar user-avatar" style={{
-          background : `url(${this.props.avatar}`,
+          background : `#efefef url(${this.props.avatar}`,
           backgroundSize: "cover"
         }}></div>
         <p class="user-name heading-6">{this.props.username}</p>

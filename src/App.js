@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 //Data
 import data from './data';
@@ -13,6 +13,7 @@ import Navbar from './components/Navbar/Navbar';
 //Pages
 import Home from './pages/Home/Home';
 import Profile from './pages/Profile/Profile';
+import Recipe from './pages/Recipe/Recipe';
 
 class App extends Component {
   render() {
@@ -20,13 +21,17 @@ class App extends Component {
       <Router>
         <div className="app">
           <Navbar />
-
-          <Route exact path="/"  render={ (props) => (
-            <Home data={data} />
-          )}/>
-          <Route path="/:id" render={(props) => (
-            <Profile data={data} {...props} />
-          )} />
+          <Switch>
+            <Route exact path="/"  render={ (props) => (
+              <Home data={data} />
+            )}/>
+            <Route exact path="/recipe/:recipeId" render={(props) => (
+              <Recipe data={data} {...props} />
+            )} />
+            <Route path="/:id" render={(props) => (
+              <Profile data={data} {...props} />
+            )} />
+          </Switch>
         </div>
       </Router>
     );

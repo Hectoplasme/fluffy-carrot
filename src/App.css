@@ -18,6 +18,8 @@
   5.1 - Container
 6 - IMAGES
   6.1 - Avatar
+7 - MODAL
+  7.1 - Base
 */
 
 
@@ -121,6 +123,7 @@ body {
   display: inline-block;
   vertical-align: middle;
   padding: 1rem 1.2rem;
+  margin: 0.5rem;
   background-color: #efefefe3;
   border: none;
   border-radius: 0.5rem;
@@ -128,9 +131,21 @@ body {
   font-weight: bold;
 }
 
+.btn:hover {
+  background: #bbbbbbe3;
+}
+
 .btn--accent {
   background: #0da064;
   color: #fff;
+}
+
+.btn--accent:hover {
+  background: #09794c;
+}
+
+.btn:not(.btn-floating) .icon {
+  padding-right: 1rem;
 }
 
 /* 2.2 - Floating button */
@@ -212,9 +227,23 @@ body {
   clear: both;
 }
 
+.float-right {
+  float: right;
+}
+@media (max-width:850px) {
+  .float-right-only-on-mobile {
+    float: right;
+  }
+}
 /* 4.2 - Media queries */
 @media (max-width:850px) {
   .hidden-on-mobile {
+      display: none;
+  }
+}
+
+@media (min-width:850px) {
+  .only-on-mobile {
       display: none;
   }
 }
@@ -258,4 +287,15 @@ body {
     border: white 0.5rem solid;
   }
 
+}
+
+/* MODAL */
+/* 7.1 - Modal */
+.modal {
+  width: 100%;
+  max-width: 80rem;
+  margin: auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 1rem;
 }
