@@ -23,7 +23,7 @@ class RecipeDataList extends Component {
             } else {
               return (
                 <p key={`list-item-${i}`} className="sidebar-list-item item--numbered border-bottom">
-                  <span className="step-number">{i}.</span>
+                  <span className="step-number">{i+1}.</span>
                   {item}
                 </p>
               )

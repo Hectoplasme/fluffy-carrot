@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 //CSS
 import './BoardCard.css'
@@ -39,7 +40,7 @@ class BoardCard extends Component {
 
   render() {
     return (
-      <a href="#" className="board-card board-item">
+      <Link to="/board/pouet" className="board-card board-item">
         <div className="board-preview">
           {this.state.recipes.map((imgUrl, i) => {
             return <BoardTile key={`board-tile-${i}`} imgUrl={imgUrl} />
@@ -47,7 +48,7 @@ class BoardCard extends Component {
         </div>
         <p className="heading-6 board-title">{this.props.board.name}</p>
         <p className="text">{`${this.props.board.recipes.length} recette${this.props.board.recipes.length > 1 ? "s": ""}`} </p>
-      </a>
+      </Link>
     );
   }
 }

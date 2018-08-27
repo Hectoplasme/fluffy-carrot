@@ -14,6 +14,7 @@ import Navbar from './components/Navbar/Navbar';
 import Home from './pages/Home/Home';
 import Profile from './pages/Profile/Profile';
 import Recipe from './pages/Recipe/Recipe';
+import Board from './pages/Board/Board';
 
 class App extends Component {
   render() {
@@ -27,6 +28,9 @@ class App extends Component {
             )}/>
             <Route exact path="/recipe/:recipeId" render={(props) => (
               <Recipe data={data} {...props} />
+            )} />
+            <Route exact path="/board/:boardId" render={(props) => (
+              <Board data={data} {...props} />
             )} />
             <Route path="/:id" render={(props) => (
               <Profile data={data} {...props} />
