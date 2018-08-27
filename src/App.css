@@ -18,17 +18,17 @@
   5.1 - Container
 6 - IMAGES
   6.1 - Avatar
-7 - MODAL
-  7.1 - Base
 */
-
-
 
 /* 1 - TYPOGRAPHY */
 
 html {
   font-size: 12px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto Oxygen-Sans", Ubuntu, Cantarell, "“Fira Sans”", "“Droid Sans”", "Helvetica Neue", Helvetica, "\\30D2ラギノ角ゴPro W3", "Hiragino Kaku Gothic Pro", "\\30E1イリオ", Meiryo, "ＭＳ Ｐゴシック", Arial, sans-serif;;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto Oxygen-Sans", Ubuntu, Cantarell, "“Fira Sans”", "“Droid Sans”",
+    "Helvetica Neue", Helvetica, "\\30D2ラギノ角ゴPro W3",
+    "Hiragino Kaku Gothic Pro", "\\30E1イリオ", Meiryo, "ＭＳ Ｐゴシック", Arial,
+    sans-serif;
 }
 
 body {
@@ -39,30 +39,35 @@ body {
 
 /* 1.1 - headings */
 
-.heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 {
+.heading-1,
+.heading-2,
+.heading-3,
+.heading-4,
+.heading-5,
+.heading-6 {
   margin-top: 1rem;
   margin-bottom: 2rem;
   font-weight: bold;
 }
 
-.heading-1  {
+.heading-1 {
   font-size: 7rem;
 }
 
-.heading-2  {
+.heading-2 {
   font-size: 6rem;
 }
 
-.heading-3  {
+.heading-3 {
   font-size: 5rem;
 }
-.heading-4  {
+.heading-4 {
   font-size: 3.5rem;
 }
-.heading-5  {
+.heading-5 {
   font-size: 3rem;
 }
-.heading-6  {
+.heading-6 {
   font-size: 2rem;
 }
 
@@ -90,7 +95,7 @@ body {
 
 .link:hover {
   background: #efefef;
-  transition: background-color 0.1s ease-in; 
+  transition: background-color 0.1s ease-in;
 }
 
 .link.is-active {
@@ -104,7 +109,6 @@ body {
   right: 1rem;
   vertical-align: middle;
 }
-
 
 .icon-accent {
   color: #0da064;
@@ -169,8 +173,6 @@ body {
   transition: background-color 0.1s ease-in;
 }
 
-
-
 /* 3 - FORM */
 /* 3.1 - Base */
 .input-field {
@@ -198,23 +200,29 @@ body {
   line-height: 3.5rem;
 }
 
-.input-field .input:focus, .btn:not(.navbar-brand):focus, .link:focus {
+.input-field .input:focus,
+.btn:not(.navbar-brand):focus,
+.link:focus {
   background: #efefef;
   box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.5);
   outline: 0;
 }
 
-.btn.is-active:focus, .link.is-active:focus {
+.btn.is-active:focus,
+.link.is-active:focus {
   background: transparent;
   box-shadow: none;
   outline: 0;
 }
 
-
 /* UTILITIES */
 /* 4.1 - Borders */
 .border-bottom {
   border-bottom: #efefef 1px solid;
+}
+
+.border-top {
+  border-top: #efefef 1px solid;
 }
 
 /*4.2 - Typography */
@@ -230,21 +238,21 @@ body {
 .float-right {
   float: right;
 }
-@media (max-width:850px) {
+@media (max-width: 850px) {
   .float-right-only-on-mobile {
     float: right;
   }
 }
 /* 4.2 - Media queries */
-@media (max-width:850px) {
+@media (max-width: 850px) {
   .hidden-on-mobile {
-      display: none;
+    display: none;
   }
 }
 
-@media (min-width:850px) {
+@media (min-width: 850px) {
   .only-on-mobile {
-      display: none;
+    display: none;
   }
 }
 
@@ -292,21 +300,8 @@ body {
     border: white 0.5rem solid;
   }
 
-  
   .avatar--small {
     height: 3rem;
     width: 3rem;
   }
-
-}
-
-/* MODAL */
-/* 7.1 - Modal */
-.modal {
-  width: 100%;
-  max-width: 80rem;
-  margin: auto;
-  padding: 1rem;
-  background: white;
-  border-radius: 1rem;
 }
