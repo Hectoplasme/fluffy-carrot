@@ -12,9 +12,6 @@ class Navbar extends Component {
   render() {
     return (
       <div className="navbar border-bottom">
-        <div className="modal-container">
-          <AddModal />
-        </div>
         <Link to="/" className="navbar-item navbar-brand btn btn-floating">
           <i className="icon fas fa-cookie-bite" />
         </Link>

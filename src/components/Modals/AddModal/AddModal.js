@@ -11,14 +11,8 @@ class AddModal extends Component {
   render() {
     return (
       <Modal
-        heading="Créer une épingle"
+        heading="Créer une recette"
         footer={[
-          {
-            name: "Supprimer",
-            action: () => {
-              console.log("delete the recipe");
-            }
-          },
           {
             name: "Annuler",
             accent: false,
@@ -37,7 +31,28 @@ class AddModal extends Component {
           }
         ]}
       >
-        test
+        <div className="add-modal-inner">
+          <div className="add-modal-left">
+            <button className="modal-img-upload">
+              <i className="icon icon-large fas fa-camera" />
+              <p className="text bold">Choisir une image</p>
+            </button>
+          </div>
+          <div className="add-modal-right">
+            <form className="form">
+              <div className="input-field">
+                <label htmlFor="name" className="label">
+                  Titre de la recette
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="Recette de pâtes"
+                  />
+                </label>
+              </div>
+            </form>
+          </div>
+        </div>
       </Modal>
     );
   }
