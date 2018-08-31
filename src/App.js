@@ -22,7 +22,7 @@ class App extends Component {
     return (
       <Router>
         <div className="app">
-          <div className="overflow-hidden">
+          <div className=" ">
             <Navbar />
             <Switch>
               <Route exact path="/" render={props => <Home data={data} />} />
@@ -44,9 +44,7 @@ class App extends Component {
           </div>
 
           {/* Modals */}
-          <div className="modal-container">
-            <AddModal />
-          </div>
+          <div className="modal-container">{/* <AddModal /> */}</div>
         </div>
       </Router>
     );

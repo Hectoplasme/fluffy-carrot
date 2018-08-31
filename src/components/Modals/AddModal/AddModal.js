@@ -49,6 +49,14 @@ class AddModal extends Component {
                     placeholder="Recette de pâtes"
                   />
                 </label>
+                <label htmlFor="name" className="label">
+                  Description de la recette
+                  <textarea
+                    type="text"
+                    className="textarea"
+                    placeholder="Donnez un avant goût de votre recette, racontez son histoire"
+                  />
+                </label>
               </div>
             </form>
           </div>

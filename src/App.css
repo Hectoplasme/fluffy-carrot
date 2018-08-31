@@ -34,7 +34,14 @@ html {
 body {
   font-size: 1.3rem;
   color: #333;
-  /* word-wrap: break-word; */
+}
+
+textarea {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto Oxygen-Sans", Ubuntu, Cantarell, "“Fira Sans”", "“Droid Sans”",
+    "Helvetica Neue", Helvetica, "\\30D2ラギノ角ゴPro W3",
+    "Hiragino Kaku Gothic Pro", "\\30E1イリオ", Meiryo, "ＭＳ Ｐゴシック", Arial,
+    sans-serif;
 }
 
 /* 1.1 - headings */
@@ -210,6 +217,20 @@ body {
   border-radius: 0.3rem;
   border: #333 1px solid;
 }
+.input-field .label {
+  display: block;
+  margin-bottom: 2rem;
+}
+.input-field .textarea {
+  width: 100%;
+  height: 15rem;
+  padding: 0.8rem 0.8rem 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 1.3rem;
+  border-radius: 0.3rem;
+  border: #333 1px solid;
+  resize: none;
+}
 
 .input-field .input:focus,
 .btn:not(.navbar-brand):focus,
@@ -271,17 +292,6 @@ body {
 .overflow-hidden {
   position: fixed;
   overflow: hidden;
-}
-
-.overflow-hidden::after {
-  content: "";
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(51, 51, 51, 0.5);
 }
 
 /* LAYOUT */
