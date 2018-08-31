@@ -20,12 +20,31 @@
   padding-right: 1rem;
 }
 
+.add-modal-fw {
+  width: 55rem;
+  font-size: 1.5rem;
+  padding: 1rem 3rem;
+}
+
 .modal-img-upload {
   width: 20rem;
   height: 30rem;
   padding: 2rem;
   border: rgba(51, 51, 51, 0.521) 2px dashed;
   border-radius: 0.5rem;
+}
+
+.input-field .modal-img-upload .icon {
+  position: absolute;
+  padding: 0 1.2rem;
+  color: #8e8e8e;
+  font-size: 1.8rem;
+  line-height: 3.5rem;
+}
+
+.add-step-btn {
+  margin-top: -2rem;
+  /* text-align: right; */
 }
 
 @media (max-width: 700px) {
@@ -39,6 +58,10 @@
   .add-modal-left {
     width: 100%;
     padding: 1rem 1rem;
+  }
+
+  .add-modal-fw {
+    width: 100%;
   }
 
   .add-modal-left {

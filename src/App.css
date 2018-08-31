@@ -190,13 +190,6 @@ textarea {
   font-size: 1.5rem;
 }
 /* 3.2 - Input */
-.input-field .icon {
-  position: absolute;
-  padding: 0 1.2rem;
-  color: #8e8e8e;
-  font-size: 1.8rem;
-  line-height: 3.5rem;
-}
 
 .input-field--search .input {
   width: 100%;
@@ -217,10 +210,50 @@ textarea {
   border-radius: 0.3rem;
   border: #333 1px solid;
 }
+
+/* Input for number */
+/* Hide the arrows of the number input */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-field .input.input--number {
+  display: inline-block;
+  width: 3rem;
+  margin: 0.5rem;
+  padding: 0.7rem 0rem;
+  text-align: center;
+}
+
+/* input inline */
+.input-field .input.input--inline {
+  display: inline-block;
+  max-width: 15rem;
+  margin: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .input-field .input.input--inline {
+    max-width: 35%;
+  }
+}
+
+.input-field .input.input--inline:first-of-type {
+  margin-left: 0;
+}
+
+/* Label */
 .input-field .label {
   display: block;
   margin-bottom: 2rem;
 }
+
+/* Textarea */
 .input-field .textarea {
   width: 100%;
   height: 15rem;
@@ -232,9 +265,33 @@ textarea {
   resize: none;
 }
 
+/* Dropdown */
+.input-field select {
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  appearance: none;
+}
+
+.input-field .dropdown {
+  width: 100%;
+  padding: 0.8rem 0.8rem 0.5rem;
+  margin: 0.5rem 0;
+  font-size: 1.3rem;
+  border-radius: 0.3rem;
+  border: #333 1px solid;
+}
+
+.input-field .dropdown .dropdown-item {
+  display: block;
+  padding: 0.5rem;
+}
+
+/* Focus */
 .input-field .input:focus,
 .btn:not(.navbar-brand):focus,
-.link:focus {
+.link:focus,
+.input-field .textarea:focus,
+.input-field .dropdown:focus {
   background: #efefef;
   box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.5);
   outline: 0;

@@ -41,6 +41,10 @@
   margin-right: auto;
 }
 
+.modal-form-title {
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 700px) {
   .modal {
     width: 85%;
