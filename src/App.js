@@ -44,9 +44,9 @@ class App extends Component {
           </div>
 
           {/* Modals */}
-          <div className="modal-container">
+          {/* <div className="modal-container">
             <AddModal />
-          </div>
+          </div> */}
         </div>
       </Router>
     );

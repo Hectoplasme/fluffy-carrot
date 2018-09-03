@@ -40,6 +40,14 @@ class Navbar extends Component {
         </a>
         <a href="#" className="navbar-item btn btn-floating">
           <i className="icon icon-large fas fa-ellipsis-h" />
+          <div className="menu-dropdown">
+            <a className="menu-dropdown-item border-bottom">
+              Paramètres
+            </a>  
+            <a className="menu-dropdown-item border-bottom">
+              Se connecter
+            </a>  
+          </div>
         </a>
       </div>
     );
