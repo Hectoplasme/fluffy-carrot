@@ -1,52 +1,59 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-//Data
-import data from "./data";
-
-//CSS
-import "./App.css";
-
 //Components
-import Navbar from "./components/Navbar/Navbar";
-import AddModal from "./components/Modals/AddModal/AddModal";
-
+import Navbar from "./components/layout/Navbar";
 //Pages
-import Home from "./pages/Home/Home";
-import Profile from "./pages/Profile/Profile";
-import Recipe from "./pages/Recipe/Recipe";
-import Board from "./pages/Board/Board";
+import Home from "./components/pages/Home";
+import Profile from "./components/pages/Profile";
+import Board from "./components/pages/Board";
+import Recipe from "./components/pages/Recipe";
+
+//Modals
+import AddRecipe from "./components/recipes/AddRecipe";
+import DeleteRecipe from "./components/recipes/DeleteRecipe";
+import EditRecipe from "./components/recipes/EditRecipe";
+import AddBoard from "./components/boards/AddBoard";
+import DeleteBoard from "./components/boards/DeleteBoard";
+import EditBoard from "./components/boards/EditBoard";
+import Login from "./components/users/Login";
+import Register from "./components/users/Register";
+import Share from "./components/users/Share";
 
 class App extends Component {
   render() {
     return (
       <Router>
-        <div className="app">
+        <div className="App">
           <div className="overflow-hidden">
             <Navbar />
+
             <Switch>
-              <Route exact path="/" render={props => <Home data={data} />} />
+              <Route exact path="/" component={Home} />
+              <Route exact path="/recipe/:recipe" component={Recipe} />
+              <Route exact path="/add/" component={AddRecipe} />
+              <Route exact path="/create" component={AddBoard} />
+              <Route exact path="/share/:id" component={Share} />
               <Route
                 exact
-                path="/recipe/:recipeId"
-                render={props => <Recipe data={data} {...props} />}
+                path="/delete/recipe/:recipe"
+                component={DeleteRecipe}
               />
+              <Route exact path="/edit/recipe/:recipe" component={EditRecipe} />
+              <Route exact path="/edit/board/:board" component={EditBoard} />
               <Route
                 exact
-                path="/board/:boardId"
-                render={props => <Board data={data} {...props} />}
+                path="/delete/board/:board"
+                component={DeleteBoard}
               />
-              <Route
-                path="/:id"
-                render={props => <Profile data={data} {...props} />}
-              />
+
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/register" component={Register} />
+
+              <Route exact path="/:id/board/:board" component={Board} />
+              <Route path="/:id" render={props => <Profile {...props} />} />
             </Switch>
           </div>
-
-          {/* Modals */}
-          {/* <div className="modal-container">
-            <AddModal />
-          </div> */}
         </div>
       </Router>
     );

@@ -1,19 +1,24 @@
 {
-  "name": "fluffy-carrot",
+  "name": "fluffy-cookie",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "classnames": "^2.2.6",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-masonry-css": "^1.0.11",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "1.1.5",
     "react-sizeme": "^2.5.2"
   },
   "scripts": {
+    "tailwind:css": "tailwind build ./tailwind/styles.src.css -c  ./tailwind/config.js -o ./src/styles.css",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "tailwindcss": "^0.6.5"
   }
 }
