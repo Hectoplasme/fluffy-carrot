@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import classnames from "classnames";
 
 export class ModalHeader extends Component {
@@ -8,9 +9,12 @@ export class ModalHeader extends Component {
         <div className="text-xl sm:text-2xl font-bold pl-4 pr-16 sm:px-16 text-center py-6 sm:py-8 border-b border-grey-lighter">
           {this.props.children}
         </div>
-        <button className="btn-floating absolute pin-r pin-t mr-2 mt-1 sm:mt-4 sm:mr-4 overflow-hidden hover:bg-transparent after:bg-grey-light">
+        {/* <Link
+          to="/"
+          className="btn-floating absolute pin-r pin-t mr-2 mt-1 sm:mt-4 sm:mr-4 overflow-hidden hover:bg-transparent after:bg-grey-light"
+        >
           <i className="fas fa-times icon" />
-        </button>
+        </Link> */}
       </div>
     );
   }

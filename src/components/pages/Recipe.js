@@ -3,46 +3,7 @@ import { Link } from "react-router-dom";
 
 //Components
 import List from "../layout/List";
-import Recipes from "../recipes/Recipes";
-
-//Data placeholder
-const recipes = [
-  {
-    id: "recipe-1",
-    title: "Pâtes à la carbonara",
-    imgUrl: "https://picsum.photos/200/300/?random",
-    height: 300,
-    width: 200
-  },
-  {
-    id: "recipe-2",
-    title: "Pâtes bolognaise",
-    imgUrl: "https://picsum.photos/500/500/?random",
-    height: 500,
-    width: 500
-  },
-  {
-    id: "recipe-3",
-    title: "Risotto au poulet",
-    imgUrl: "https://picsum.photos/300/400/?random",
-    height: 400,
-    width: 300
-  },
-  {
-    id: "recipe-4",
-    title: "Risotto aux champignons",
-    imgUrl: "https://picsum.photos/200/400/?random",
-    height: 400,
-    width: 200
-  },
-  {
-    id: "recipe-5",
-    title: "Pâtes à la carbonara",
-    imgUrl: "https://picsum.photos/200/300/?random",
-    height: 300,
-    width: 200
-  }
-];
+// import Recipes from "../recipes/Recipes";
 
 class Recipe extends Component {
   render() {
@@ -183,7 +144,7 @@ class Recipe extends Component {
         <div className="max-w-lg mx-auto text-2xl font-bold px-4">
           Plus de ce genre
         </div>
-        <Recipes recipes={recipes} />
+        {/* <Recipes recipes={recipes} /> */}
       </div>
     );
   }

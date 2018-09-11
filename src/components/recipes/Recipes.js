@@ -52,7 +52,14 @@ class Recipes extends Component {
           if (add && i === 0) {
             return AddButton;
           } else {
-            return <Recipe key={item.id} {...item} />;
+            return (
+              <Recipe
+                key={item.id}
+                id={item.id}
+                imgUrl={item.imgUrl}
+                title={item.title}
+              />
+            );
           }
         })}
       </Masonry>
