@@ -1,13 +1,38 @@
 import React, { Component } from "react";
 import { Link, NavLink } from "react-router-dom";
+import PropTypes from "prop-types";
+
+//Redux
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { firebaseConnect } from "react-redux-firebase";
 
 //Components
 import Dropdown from "../layout/Dropdown";
 
 class Navbar extends Component {
   state = {
-    showDropdown: false
+    showDropdown: false,
+    isAuthenticated: false
   };
+
+  static getDerivedStateFromProps(props, state) {
+    const { auth } = props;
+
+    if (auth.uid) {
+      return { isAuthenticated: true };
+    } else {
+      return { isAuthenticated: false };
+    }
+  }
+
+  onLogOutClick = e => {
+    e.preventDefault();
+
+    const { firebase } = this.props;
+    firebase.logout();
+  };
+
   toggleDropdown = e => {
     this.dropdownHandler.blur();
 
@@ -15,7 +40,10 @@ class Navbar extends Component {
       showDropdown: !this.state.showDropdown
     });
   };
+
   render() {
+    const { auth } = this.props;
+    const { isAuthenticated } = this.state;
     return (
       <div className="flex items-center px-4 py-3 border-b border-grey-lighter">
         <NavLink
@@ -36,7 +64,7 @@ class Navbar extends Component {
             Accueil
           </NavLink>
           <NavLink
-            to="/user"
+            to={isAuthenticated ? "/user" : "/login"}
             className="link link--icon"
             activeClassName="active"
           >
@@ -44,7 +72,7 @@ class Navbar extends Component {
             <span>Mes recettes</span>
           </NavLink>
           <NavLink
-            to="/add"
+            to="/recipe/add"
             className="btn-floating btn-floating--accent"
             activeClassName="active"
           >
@@ -61,12 +89,23 @@ class Navbar extends Component {
                 show={this.state.showDropdown}
                 toggle={this.toggleDropdown}
               >
-                <Link
-                  to="/login"
-                  className="hover:bg-grey-lightest no-underline text-xl font-bold text-black block py-6  border-b border-grey-lighter outline-none"
-                >
-                  Se connecter
-                </Link>
+                {!isAuthenticated && (
+                  <Link
+                    to="/login"
+                    className="hover:bg-grey-lightest no-underline text-xl font-bold text-black block py-6  border-b border-grey-lighter outline-none"
+                  >
+                    Se connecter
+                  </Link>
+                )}
+                {isAuthenticated && (
+                  <a
+                    href="#!"
+                    className="hover:bg-grey-lightest no-underline text-xl font-bold text-black block py-6  border-b border-grey-lighter outline-none"
+                    onClick={this.onLogOutClick}
+                  >
+                    Se déconnecter
+                  </a>
+                )}
                 <Link
                   to="/about"
                   className="hover:bg-grey-lightest no-underline text-xl font-bold text-black block py-6 focus"
@@ -82,4 +121,14 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar;
+Navbar.propTypes = {
+  firebase: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+export default compose(
+  firebaseConnect(),
+  connect((state, props) => ({
+    auth: state.firebase.auth
+  }))
+)(Navbar);

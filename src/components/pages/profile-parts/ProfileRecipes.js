@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
 import Recipes from "../../recipes/Recipes";
-import Recipe from "../../recipes/Recipe";
 
 //Data placeholder
 const recipes = [

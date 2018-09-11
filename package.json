@@ -4,12 +4,19 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.2.6",
+    "firebase": "^5.4.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-firebase-file-uploader": "^2.4.2",
     "react-masonry-css": "^1.0.11",
+    "react-redux": "^5.0.7",
+    "react-redux-firebase": "^2.1.8",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.5",
-    "react-sizeme": "^2.5.2"
+    "react-sizeme": "^2.5.2",
+    "redux": "^4.0.0",
+    "redux-auth-wrapper": "^2.0.3",
+    "redux-firestore": "^0.5.8"
   },
   "scripts": {
     "tailwind:css": "tailwind build ./tailwind/styles.src.css -c  ./tailwind/config.js -o ./src/styles.css",
