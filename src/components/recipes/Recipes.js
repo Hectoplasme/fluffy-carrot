@@ -33,42 +33,68 @@ class Recipes extends Component {
       </Link>
     );
 
-    if (add) {
+    if (add && recipes) {
       recipes.unshift("");
     }
 
-    return (
-      <Masonry
-        breakpointCols={breakpointColumnsObj}
-        className={classnames("flex mx-auto p-4 pr-6 pt-2", {
-          "max-w-6xl": !thin,
-          "max-w-2xl px-8 md:px-24 ": thin
-        })}
-        columnClassName={classnames("masonry-col", {
-          "-ml-4 mr-4": thin
-        })}
-      >
-        {recipes.map((item, i) => {
-          if (add && i === 0) {
-            return AddButton;
-          } else {
-            return (
-              <Recipe
-                key={item.id}
-                id={item.id}
-                imgUrl={item.imgUrl}
-                title={item.title}
-              />
-            );
-          }
-        })}
-      </Masonry>
-    );
+    if (recipes.length > 0) {
+      return (
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className={classnames("flex mx-auto p-4 pr-6 pt-2", {
+            "max-w-6xl": !thin,
+            "max-w-2xl px-8 md:px-24 ": thin
+          })}
+          columnClassName={classnames("masonry-col", {
+            "-ml-4 mr-4": thin
+          })}
+        >
+          {recipes.map((item, i) => {
+            if (add && i === 0) {
+              return AddButton;
+            } else {
+              return (
+                <Recipe
+                  key={item.id}
+                  id={item.id}
+                  imgUrl={item.imgUrl}
+                  title={item.title}
+                />
+              );
+            }
+          })}
+        </Masonry>
+      );
+    } else {
+      // placeholder
+      return (
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className={classnames("flex mx-auto p-4 pr-6 pt-2", {
+            "max-w-6xl": !thin,
+            "max-w-2xl px-8 md:px-24 ": thin
+          })}
+          columnClassName={classnames("masonry-col", {
+            "-ml-4 mr-4": thin
+          })}
+        >
+          <Recipe />
+          <Recipe />
+          <Recipe />
+          <Recipe />
+          <Recipe />
+          <Recipe />
+          <Recipe />
+          <Recipe />
+          <Recipe />
+        </Masonry>
+      );
+    }
   }
 }
 
 Recipes.proptypes = {
-  recipes: PropTypes.array.isRequired
+  recipes: PropTypes.array
 };
 
 export default Recipes;

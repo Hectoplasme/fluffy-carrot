@@ -13,15 +13,10 @@ import Spinner from "../layout/Spinner";
 class Home extends Component {
   render() {
     const { recipes } = this.props;
-
     if (recipes) {
-      return (
-        <div>
-          <Recipes recipes={recipes} />
-        </div>
-      );
+      return <Recipes recipes={recipes} />;
     } else {
-      return <Spinner />;
+      return <Recipes recipes={[]} />;
     }
   }
 }

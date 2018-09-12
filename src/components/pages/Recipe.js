@@ -9,6 +9,7 @@ import { firestoreConnect } from "react-redux-firebase";
 
 //Components
 import List from "../layout/List";
+import RecipeUserInfos from "./recipe-parts/recipeUserInfos";
 // import Recipes from "../recipes/Recipes";
 
 class Recipe extends Component {
@@ -61,61 +62,64 @@ class Recipe extends Component {
                   <div className="inline-flex items-center justify-center md:w-3/5 mx-0 p-4 pt-0">
                     <img
                       className="bg-grey-light rounded-lg"
-                      src="https://picsum.photos/800/1200/?random"
-                      alt="titre"
+                      src={recipe.imgUrl}
+                      alt={recipe.title}
                     />
                   </div>
                   <div className="inline-block md:w-2/5 mx-0 px-4">
-                    <div className="flex  items-center mb-4">
-                      <div
-                        className="flex-no-shrink h-12 w-12 sm:h-16 sm:w-16 mr-2 md:mr-4 rounded-full bg-grey-light"
-                        style={{
-                          background: `#dae1e7 url(https://picsum.photos/400/400/?random)`,
-                          backgroundSize: "cover"
-                        }}
-                      />
-                      <p>
-                        <span className="font-bold">Vous</span> avez enregistré
-                        cette recettes dans{" "}
-                        <span className="font-bold">Recettes de pâtes</span>
-                      </p>
-                    </div>
+                    <RecipeUserInfos
+                      userId={recipe.user}
+                      boardId={recipe.board}
+                    />
                     <h1 className="text-2xl sm:text-3xl mb-2">
                       {recipe.title}
                     </h1>
                     {recipe.keywords && (
                       <ul className="p-0">
-                        <li className="inline-block block">
-                          <Link
-                            to="/"
-                            className="text-xs tracking-wide uppercase text-purple-dark no-underline pl-2 hover:text-purple-darker"
+                        {recipe.keywords.map((keyword, i) => (
+                          <li
+                            key={`keyword-${i}`}
+                            className="inline-block block"
                           >
-                            #champignons
-                          </Link>
-                        </li>
+                            <Link
+                              to="#!"
+                              className="text-xs tracking-wide uppercase text-purple-dark no-underline pl-2 hover:text-purple-darker"
+                            >
+                              #{keyword}
+                            </Link>
+                          </li>
+                        ))}
                       </ul>
                     )}
                     {recipe.description && (
                       <p className="text-xl mt-4  border-grey-light">
-                        Ces petits champignons sont totalement vegans et
-                        parfaits pour des apéros sains. L'avocat riche en bonne
-                        graisse et les champignons riches en fibres font de ces
-                        petites bouchées un apéro très rassasiant pour un Indice
-                        Glycémique quasi nul.
+                        {recipe.description}
                       </p>
                     )}
                     <ul className="py-5 mt-5 px-0 border-t border-b border-grey-light">
                       <li className="block mb-2 font-bold text-lg">
                         <i className="far fa-smile mr-2" />
-                        Pour 4 personnes
+                        Pour {recipe.quantity} personnes
                       </li>
                       <li className="block mb-2 font-bold text-lg">
                         <i className="far fa-clock mr-2" />
-                        23 min
+                        {recipe.time.hours && recipe.time.hours != 0
+                          ? `${recipe.time.hours} h `
+                          : null}
+
+                        {recipe.time.minutes && recipe.time.minutes != 0
+                          ? `${recipe.time.minutes} min`
+                          : null}
                       </li>
                       <li className="block font-bold text-lg">
                         <i className="far fa-hand-peace mr-2" />
-                        Facile
+                        {recipe.difficulty === "very-easy"
+                          ? "Très facile"
+                          : recipe.difficulty === "easy"
+                            ? "Facile"
+                            : recipe.difficulty === "medium"
+                              ? "Moyenne"
+                              : "Difficile"}
                       </li>
                     </ul>
                   </div>
@@ -125,36 +129,19 @@ class Recipe extends Component {
                   <List
                     title="Ingrédients"
                     icon="cookie-bite"
-                    items={[
-                      "12 champignons de Paris",
-                      "1/2 avocat mûr",
-                      "1 cuil. à soupe de jus de citron vert",
-                      "1 gousse d'ail",
-                      "1 botte de basilic"
-                    ]}
+                    items={recipe.ingredients}
                   />
 
                   {recipe.ustensils && (
                     <List
                       title="Matériel"
                       icon="utensils"
-                      items={["Sac congélation", "Mini-mixeur"]}
+                      items={recipe.ustensils}
                     />
                   )}
                 </div>
                 <div className="inline-block md:w-2/3 mx-0">
-                  <List
-                    title="Préparation"
-                    items={[
-                      "Préchauffez le four à 210°C(th. 7). Lavez délicatement les champignons sous un filet d'eau froide. Séchez-les avec du papier absorbant. Retirez le pied de chaque champignon avec la main, en le tournant légèrement.",
-                      "Disposez les têtes de champignons sur une plaque recouverte de papier sulfurisé, dos vers le haut. Enfournez pour 8 min. Placez ensuite les champignons sur du papier absorbant dans la même position que dans le four, afin de les laissez refroidir et se vider de leur eau.",
-                      "Quand ils sont complètements froids, retirez l'humidité des champignons à l'aide de papier absorbant, en tapotant légèrement à l'intérieur.",
-                      "Dans un mini-mixeur, placez le demi-avocat, le jus de citron vert, la gousse d'ail dégermée, le basiic, le paprika et le sel, pluis mixez jusqu'à l'obtention d'une texture lisse et crémeuse",
-                      "Mettez le mélange dans un petit sac de congélation, et poussez vers un angle du sac. Coupez le bout de l'angle avec un ciseau.",
-                      "A l'aide de cette poche à douille maison, garnissez les champignons, puis réservez au frais.",
-                      "Servez avec un filet d'huile d'olive et saupoudrez d'un peu de paprika"
-                    ]}
-                  />
+                  <List title="Préparation" items={recipe.steps} />
                 </div>
               </div>
             )}
@@ -177,10 +164,16 @@ class Recipe extends Component {
                     <i className=" fas fa-chevron-left inline-block -ml-1 -mt-1 mr-2 text-2xl align-middle" />
                     <span> Accueil</span>
                   </Link>
-                  <div className="btn-floating h-12 w-12 text-2xl mr-2 ml-2 bg-grey-light" />
-                  <div className="btn-floating h-12 w-12 text-2xl mr-2 sm:hidden bg-grey-light" />
-                  <div className="hidden sm:inline-block btn ml-auto mr-2 w-32 h-12" />
-                  <div className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0 w-32 h-12" />
+                  <div className="btn-floating h-12 w-12 text-2xl mr-2 ml-2 bg-grey-lightest" />
+                  <div className="btn-floating h-12 w-12 text-2xl mr-2 sm:hidden bg-grey-lightest" />
+                  <div
+                    className="hidden sm:inline-block btn ml-auto mr-2 w-32"
+                    style={{ height: "43px" }}
+                  />
+                  <div
+                    className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0 w-32"
+                    style={{ height: "43px" }}
+                  />
                 </div>
 
                 <div className="flex flex-strech flex-col md:flex-row mb-4">
@@ -188,14 +181,7 @@ class Recipe extends Component {
                     <div className="bg-grey-light rounded-lg w-full h-screen" />
                   </div>
                   <div className="inline-block md:w-2/5 mx-0 px-4">
-                    <div className="flex items-center mb-4">
-                      <div className="flex-no-shrink h-12 w-12 sm:h-16 sm:w-16 mr-2 md:mr-4 rounded-full bg-grey-light" />
-                      <div className="relative flex-grow">
-                        <div className="w-full h-3 mb-2 bg-grey-light" />
-                        <div className="w-full h-3 mb-2 bg-grey-light" />
-                        <div className="w-full h-3  bg-grey-light" />
-                      </div>
-                    </div>
+                    <RecipeUserInfos userId="" boardId="" />
                     <h1 className="text-2xl sm:text-3xl mb-8">
                       <div className="w-full h-8 mb-2 bg-grey-light" />
                       <div className="w-full h-8 bg-grey-light" />
@@ -247,7 +233,7 @@ export default compose(
     {
       collection: "recipes",
       storeAs: "recipe",
-      doc: props.match.params.id
+      doc: props.match.params.recipe
     }
   ]),
   connect(({ firestore: { ordered } }, props) => ({

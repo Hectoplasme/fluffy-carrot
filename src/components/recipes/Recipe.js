@@ -37,37 +37,56 @@ class Recipe extends Component {
     const { width, height } = this.state;
     const waitingHeight = ((size.width - 10) * height) / width;
 
-    return (
-      <Link
-        to={`/recipe/${id}`}
-        className="group inline-block w-full m-2 p-4 after:bg-grey-light no-underline focus:outline-none"
-      >
-        <button className="btn btn--accent absolute z-10 pin-t pin-r mt-8 mr-8 p-3 hidden group-hover:block">
-          <i className="fas fa-thumbtack icon" />
-          Enregistrer
-        </button>
-        <div
-          className="block h-auto w-full max-w-full rounded-lg "
-          style={{
-            height: height !== "" ? `${waitingHeight}px` : `350px`,
-            background: `#dae1e7 url(${imgUrl})`,
-            backgroundSize: "cover"
-          }}
-        />
-        <div className="mt-4 text-black font-bold">{title}</div>
-        <button className="btn-floating btn-floating--sm absolute z-10 block pin-r pin-b mr-5 mb-2 hover:bg-grey hover:text-grey-darkest hidden group-hover:block">
-          <i className="fas fa-pen icon align-middle" />
-        </button>
-      </Link>
-    );
+    if (id) {
+      return (
+        <Link
+          to={`/recipe/${id}`}
+          className="group inline-block w-full m-2 p-4 after:bg-grey-light no-underline focus:outline-none"
+        >
+          <button className="btn btn--accent absolute z-10 pin-t pin-r mt-8 mr-8 p-3 hidden group-hover:block">
+            <i className="fas fa-thumbtack icon" />
+            Enregistrer
+          </button>
+          <div
+            className="block h-auto w-full max-w-full rounded-lg "
+            style={{
+              height: height !== "" ? `${waitingHeight}px` : `350px`,
+              background: `#dae1e7 url(${imgUrl})`,
+              backgroundSize: "cover"
+            }}
+          />
+          <div className="mt-4 text-black font-bold">{title}</div>
+          <button className="btn-floating btn-floating--sm absolute z-10 block pin-r pin-b mr-5 mb-2 hover:bg-grey hover:text-grey-darkest hidden group-hover:block">
+            <i className="fas fa-pen icon align-middle" />
+          </button>
+        </Link>
+      );
+    } else {
+      return (
+        <div className="group inline-block w-full m-2 p-4 after:bg-grey-light no-underline focus:outline-none cursor-default">
+          <div
+            className="block h-auto w-full max-w-full rounded-lg bg-grey-light"
+            style={{
+              height: `${Math.random() * 400 + 200}px`
+            }}
+          />
+          <div
+            className="bg-grey h-4 mt-4"
+            style={{
+              width: `${Math.random() * 80 + 20}%`
+            }}
+          />
+        </div>
+      );
+    }
   }
 }
 
 Recipe.propTypes = {
-  id: PropTypes.string.isRequired,
-  imgUrl: PropTypes.string.isRequired,
-  size: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired
+  id: PropTypes.string,
+  imgUrl: PropTypes.string,
+  size: PropTypes.object,
+  title: PropTypes.string
 };
 
 Recipe.defaultProps = {

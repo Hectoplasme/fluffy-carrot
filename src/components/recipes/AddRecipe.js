@@ -69,21 +69,16 @@ class AddRecipe extends Component {
       errors.board = "Vous n'avez pas choisi de tableau.";
     }
 
-    if ((hours === "" || hours === 0) && (minutes === "" || minutes === 0)) {
+    if ((hours === "" || hours == 0) && (minutes === "" || minutes == 0)) {
       errors.time = "Vous n'avez pas saisi de temps de préparation.";
     }
 
-    if (quantity === "" || quantity === 0) {
+    if (quantity === "" || quantity == 0) {
       errors.quantity = "Vous n'avez pas saisi de quantité.";
     }
 
-    // if ()
-    // if (!regexp.test(imgUrl) && !this.checkImageExists(imgUrl)) {
-    //   errors.imgUrl = "Cette image ou cet url n'est pas valide.";
-    // }
-
     if (ingredients.length === 0) {
-      errors.ingredients = "Vous n'avez saisi aucun ingrédients.";
+      errors.ingredients = "Vous n'avez saisi aucun ingrédient.";
     }
 
     if (steps.length === 0) {
@@ -108,14 +103,13 @@ class AddRecipe extends Component {
         errors: errors
       });
     } else {
-      const keywordsArray = keywords
-        .split(",")
-        .join(" ")
-        .split(" ")
-        .filter(item => item !== "");
+      //Create the keywords array from string
+      const keywordsArray = keywords.split(/,\s?/).filter(item => item !== "");
+
+      const { firestore, auth, history, profile } = this.props;
 
       const newRecipe = {
-        board: newBoard !== "" ? newBoard : board,
+        user: auth.uid,
         title,
         description,
         difficulty,
@@ -127,14 +121,94 @@ class AddRecipe extends Component {
         keywords: keywordsArray,
         imgUrl,
         ustensils,
+        ingredients,
         steps
       };
+      //If the board is a new board
+      if (board === "board-new") {
+        //First create the new board
+        firestore
+          .add({ collection: "boards" }, { title: newBoard, author: auth.uid })
+          .then(res => {
+            const boardId = res.id;
+            //then create the recipe
+            firestore
+              .add({ collection: "recipes" }, { board: res.id, ...newRecipe })
+              .then(res => {
+                const recipeId = res.id;
+                //then update the board with the recipe id
+                firestore
+                  .update(
+                    { collection: "boards", doc: boardId },
+                    { recipes: [res.id] }
+                  )
+                  .then(() => {
+                    //then add the board and the recipe in the user data
+                    const newBoardObj = {
+                      id: boardId,
+                      title: newBoard,
+                      recipes: [recipeId]
+                    };
+                    firestore
+                      .update(
+                        { collection: "users", doc: auth.uid },
+                        {
+                          boards: profile.boards
+                            ? [...profile.boards, newBoardObj]
+                            : [newBoardObj],
+                          recipes: profile.recipes
+                            ? [...profile.recipes, recipeId]
+                            : [recipeId]
+                        }
+                      )
+                      .then(() => history.push("/"))
+                      .catch(err => console.log(err));
+                  });
+              });
+          });
+      } else {
+        //First create the recipe
+        firestore
+          .add({ collection: "recipes" }, { board: board, ...newRecipe })
+          .then(res => {
+            //Then store the recipe id in the board
+            const recipeId = res.id;
+            const recipes = profile.boards.find(
+              boardObj => boardObj.id === board
+            ).recipes;
 
-      const { firestore, history } = this.props;
+            firestore
+              .update(
+                { collection: "boards", doc: board },
+                { recipes: [...recipes, recipeId] }
+              )
+              .then(() => {
+                //Create a new boards array to update the user data
+                const boardUpdated = profile.boards.find(
+                  boardObj => boardObj.id === board
+                );
+                boardUpdated.recipes = [...recipes, recipeId];
+                const newBoardsArray = profile.boards.filter(
+                  boardObj => boardObj.id !== board
+                );
+                newBoardsArray.push(boardUpdated);
 
-      firestore
-        .add({ collection: "recipes" }, newRecipe)
-        .then(() => history.push("/"));
+                //then update the user
+                firestore
+                  .update(
+                    { collection: "users", doc: auth.uid },
+                    {
+                      boards: newBoardsArray,
+                      recipes: profile.recipes
+                        ? [...profile.recipes, recipeId]
+                        : [recipeId]
+                    }
+                  )
+                  .then(() => history.push("/"))
+                  .catch(err => console.log(err));
+              });
+          });
+      }
     }
   };
 
@@ -236,8 +310,8 @@ class AddRecipe extends Component {
                     onChange={this.onChange}
                   >
                     {profile.boards
-                      ? profile.boards.map(board => (
-                          <option key={board.id} value={board.id}>
+                      ? profile.boards.map((board, i) => (
+                          <option key={`board-${i}`} value={board.id}>
                             {board.title}
                           </option>
                         ))
@@ -485,12 +559,17 @@ class AddRecipe extends Component {
 
 AddRecipe.propTypes = {
   firebase: PropTypes.object.isRequired,
-  profile: PropTypes.object
+  profile: PropTypes.object,
+  auth: PropTypes.object
 };
 
 export default compose(
   firestoreConnect(),
-  connect(({ firebase: { profile } }) => ({ profile }))
+  connect(state => ({
+    profile: state.firebase.profile,
+    auth: state.firebase.auth,
+    board: state.firebase.ordered.boards && state.firebase.ordered.boards[0]
+  }))
 )(AddRecipe);
 
 // export default firestoreConnect()(AddRecipe);
