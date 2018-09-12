@@ -15,8 +15,8 @@ import AddList from "./AddList";
 
 class AddRecipe extends Component {
   state = {
-    board: "board-1",
-    showNewBoardInput: false,
+    board: "board-new",
+    showNewBoardInput: true,
     newBoard: "",
     title: "",
     description: "",
@@ -65,6 +65,10 @@ class AddRecipe extends Component {
       errors.title = "Vous n'avez pas saisi de titre.";
     }
 
+    if (board === "board-new" && regexp.test(newBoard)) {
+      errors.board = "Vous n'avez pas choisi de tableau.";
+    }
+
     if ((hours === "" || hours === 0) && (minutes === "" || minutes === 0)) {
       errors.time = "Vous n'avez pas saisi de temps de préparation.";
     }
@@ -73,13 +77,10 @@ class AddRecipe extends Component {
       errors.quantity = "Vous n'avez pas saisi de quantité.";
     }
 
-    if (regexp.test(imgUrl)) {
-      errors.imgUrl = "Vous n'avez pas saisi d'image.";
-    }
-
-    if (!regexp.test(imgUrl) && !this.checkImageExists(imgUrl)) {
-      errors.imgUrl = "Cette image ou cet url n'est pas valide.";
-    }
+    // if ()
+    // if (!regexp.test(imgUrl) && !this.checkImageExists(imgUrl)) {
+    //   errors.imgUrl = "Cette image ou cet url n'est pas valide.";
+    // }
 
     if (ingredients.length === 0) {
       errors.ingredients = "Vous n'avez saisi aucun ingrédients.";
@@ -89,106 +90,72 @@ class AddRecipe extends Component {
       errors.steps = "Vous n'avez entré aucune étape.";
     }
 
-    if (errors !== {}) {
-      this.setState({
-        errors: errors
+    if (regexp.test(imgUrl)) {
+      errors.imgUrl = "Vous n'avez pas saisi d'image.";
+    } else {
+      this.checkImageExists(imgUrl, () => {
+        this.setState({
+          errors: {
+            ...errors,
+            imgUrl: "Cette image ou cet url n'est pas valide."
+          }
+        });
       });
     }
 
-    const keywordsArray = keywords
-      .split(",")
-      .join(" ")
-      .split(" ")
-      .filter(item => item !== "");
+    if (Object.keys(errors).length !== 0) {
+      this.setState({
+        errors: errors
+      });
+    } else {
+      const keywordsArray = keywords
+        .split(",")
+        .join(" ")
+        .split(" ")
+        .filter(item => item !== "");
 
-    const newRecipe = {
-      board: newBoard !== "" ? newBoard : board,
-      title,
-      description,
-      difficulty,
-      time: {
-        hours: hours,
-        minutes: minutes
-      },
-      quantity,
-      keywords: keywordsArray,
-      imgUrl,
-      ustensils,
-      steps
-    };
+      const newRecipe = {
+        board: newBoard !== "" ? newBoard : board,
+        title,
+        description,
+        difficulty,
+        time: {
+          hours: hours,
+          minutes: minutes
+        },
+        quantity,
+        keywords: keywordsArray,
+        imgUrl,
+        ustensils,
+        steps
+      };
 
-    const { firestore, history } = this.props;
+      const { firestore, history } = this.props;
 
-    firestore
-      .add({ collection: "recipes" }, newRecipe)
-      .then(() => history.push("/"));
+      firestore
+        .add({ collection: "recipes" }, newRecipe)
+        .then(() => history.push("/"));
+    }
   };
 
-  checkError = () => {
-    const {
-      title,
-      hours,
-      minutes,
-      quantity,
-      imgUrl,
-      ingredients,
-      steps
-    } = this.state;
-    const errors = {};
-
-    const regexp = RegExp(/^ *$/); //Test if the string is empty or contain only space
-
-    if (regexp.test(title)) {
-      errors.title = "Vous n'avez pas saisi de titre.";
-    }
-
-    if ((hours === "" || hours === 0) && (minutes === "" || minutes === 0)) {
-      errors.time = "Vous n'avez pas saisi de temps de préparation.";
-    }
-
-    if (quantity === "" || quantity === 0) {
-      errors.quantity = "Vous n'avez pas saisi de quantité.";
-    }
-
-    if (regexp.test(imgUrl)) {
-      errors.imgUrl = "Vous n'avez pas saisi d'image.";
-    }
-
-    if (!regexp.test(imgUrl) && !this.checkImageExists(imgUrl)) {
-      errors.imgUrl = "Cette image ou cet url n'est pas valide.";
-    }
-
-    if (ingredients.length === 0) {
-      errors.ingredients = "Vous n'avez saisi aucun ingrédients.";
-    }
-
-    if (steps.length === 0) {
-      errors.steps = "Vous n'avez entré aucune étape.";
-    }
-    console.log(errors);
-    this.setState({
-      errors: errors
-    });
-  };
-
-  checkImageExists = url => {
+  checkImageExists = (url, callback) => {
     let img = new Image();
     img.onload = () => {
       return true;
     };
     img.onerror = () => {
-      return false;
+      callback();
     };
     img.src = url;
   };
 
   onChange = e => {
-    if ([e.target.name] === "board" && e.target.value === "board-new") {
+    if ([e.target.name] == "board" && e.target.value === "board-new") {
       this.setState({
         [e.target.name]: e.target.value,
         showNewBoardInput: true
       });
-    } else if ([e.target.name] === "board" && e.target.value !== "board-new") {
+    } else if ([e.target.name] == "board" && e.target.value !== "board-new") {
       this.setState({
         [e.target.name]: e.target.value,
         showNewBoardInput: false,
@@ -239,6 +206,7 @@ class AddRecipe extends Component {
       keywords,
       errors
     } = this.state;
+    const { profile } = this.props;
     return (
       <form onSubmit={this.onSubmit}>
         <Modal>
@@ -267,8 +235,13 @@ class AddRecipe extends Component {
                     value={board}
                     onChange={this.onChange}
                   >
-                    <option value="board-1">Recette de pâtes</option>
-                    <option value="board-2">Recette de risotto</option>
+                    {profile.boards
+                      ? profile.boards.map(board => (
+                          <option key={board.id} value={board.id}>
+                            {board.title}
+                          </option>
+                        ))
+                      : null}
                     <option value="board-new">Créer un nouveau tableau</option>
                   </select>
                   <input
@@ -277,13 +250,17 @@ class AddRecipe extends Component {
                     value={newBoard}
                     onChange={this.onChange}
                     placeholder="Titre du nouveau tableau"
-                    className={classnames(
-                      "w-full p-3 my-2 border border-grey-dark rounded",
-                      {
-                        hidden: !showNewBoardInput
-                      }
-                    )}
+                    className={classnames("w-full p-3 my-2 rounded", {
+                      hidden: !showNewBoardInput,
+                      "border-red border-2": errors.board,
+                      "border-grey-dark border": !errors.board
+                    })}
                   />
+                  {errors.board && (
+                    <span className="text-red text-sm italic">
+                      {errors.board}
+                    </span>
+                  )}
                 </div>
 
                 {/* @field Title */}
@@ -299,7 +276,6 @@ class AddRecipe extends Component {
                     name="title"
                     value={title}
                     onChange={this.onChange}
-                    // required
                     placeholder="Risotto au poulet"
                     className={classnames("w-full p-3 my-2 rounded", {
                       "border border-grey-dark": !errors.title,
@@ -326,7 +302,6 @@ class AddRecipe extends Component {
                     name="description"
                     value={description}
                     onChange={this.onChange}
-                    // required
                     placeholder="Donnez un avant goût de votre recette, racontez son histoire"
                     className="w-full h-32 p-3 my-2 border border-grey-dark rounded resize-none"
                   />
@@ -365,7 +340,6 @@ class AddRecipe extends Component {
                     value={hours}
                     onChange={this.onChange}
                     min={0}
-                    // required
                     placeholder="x"
                     className={classnames(
                       "inline-block w-12 py-3 px-3 my-2 mr-2 rounded text-center",
@@ -385,7 +359,6 @@ class AddRecipe extends Component {
                     value={minutes}
                     onChange={this.onChange}
                     min={0}
-                    // required
                     placeholder="x"
                     className={classnames(
                       "inline-block w-12 py-3 px-3 my-2 mr-2 sm:ml-2 rounded text-center",
@@ -420,7 +393,6 @@ class AddRecipe extends Component {
                     name="quantity"
                     value={quantity}
                     onChange={this.onChange}
-                    // required
                     placeholder="x"
                     className={classnames(
                       "inline-block w-12 py-3 px-3 my-2 mx-2 rounded text-center",
@@ -512,13 +484,13 @@ class AddRecipe extends Component {
 }
 
 AddRecipe.propTypes = {
-  firestore: PropTypes.object.isRequired,
-  boards: PropTypes.array
+  firebase: PropTypes.object.isRequired,
+  profile: PropTypes.object
 };
 
 export default compose(
-  firestoreConnect([{ collection: "boards" }]),
-  connect((state, props) => ({
-    boards: state.firestore.ordered.boards
-  }))
+  firestoreConnect(),
+  connect(({ firebase: { profile } }) => ({ profile }))
 )(AddRecipe);
+
+// export default firestoreConnect()(AddRecipe);
