@@ -43,30 +43,33 @@ class Login extends Component {
       errors.password = "Vous n'avez pas saisi votre mot de passe.";
     }
 
-    if (errors) {
+    if (Object.keys(errors).length !== 0) {
       this.setState({ errors: errors });
+    } else {
+      firebase
+        .login({
+          email,
+          password
+        })
+        .catch(err => {
+          if (err.code === "auth/user-not-found") {
+            this.setState({
+              errors: { email: "Cet utilisateur n'existe pas." }
+            });
+          } else if (err.code === "auth/wrong-password") {
+            this.setState({
+              errors: { password: "Ce mot de passe est invalide." }
+            });
+          } else {
+            this.setState({
+              errors: {
+                error:
+                  "Oups, il y a eu un problème. Veuillez réessayer plus tard."
+              }
+            });
+          }
+        });
     }
-    firebase
-      .login({
-        email,
-        password
-      })
-      .catch(err => {
-        if (err.code === "auth/user-not-found") {
-          this.setState({ errors: { email: "Cet utilisateur n'existe pas." } });
-        } else if (err.code === "auth/wrong-password") {
-          this.setState({
-            errors: { password: "Ce mot de passe est invalide." }
-          });
-        } else {
-          this.setState({
-            errors: {
-              error:
-                "Oups, il y a eu un problème. Veuillez réessayer plus tard."
-            }
-          });
-        }
-      });
   };
 
   render() {
@@ -85,7 +88,7 @@ class Login extends Component {
             <input
               type="text"
               name="email"
-              // autoComplete="username"
+              autoComplete="username"
               value={email}
               onChange={this.onChange}
               placeholder="Email"
