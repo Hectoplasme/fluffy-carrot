@@ -42,7 +42,6 @@ class Navbar extends Component {
   };
 
   render() {
-    const { auth } = this.props;
     const { isAuthenticated } = this.state;
     return (
       <div className="flex items-center px-4 py-3 border-b border-grey-lighter">
