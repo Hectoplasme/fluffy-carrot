@@ -142,7 +142,7 @@ class AddList extends Component {
               }
             }}
             className={classnames(
-              "inline-block w-full sm:w-64 p-3 mb-2 mr-2 rounded",
+              "inline-block w-full md:w-64 p-3 mb-2 mr-2 rounded",
               {
                 "border border-grey-dark": !error,
                 "border-red border-2": error

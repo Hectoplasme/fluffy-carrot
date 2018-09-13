@@ -582,8 +582,15 @@ class EditRecipe extends Component {
               >
                 Supprimer
               </Link>
-              <button className="btn ml-auto mr-2">Annuler</button>
-              <button className="btn btn--accent ">Enregistrer</button>
+              <Link
+                to={`/recipe/${recipe.id}`}
+                className="btn ml-auto mr-2 no-underline"
+              >
+                Annuler
+              </Link>
+              <button className="btn btn--accent cursor-pointer">
+                Enregistrer
+              </button>
             </ModalFooter>
           </Modal>
         </form>

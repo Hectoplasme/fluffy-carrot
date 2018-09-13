@@ -18,6 +18,7 @@ import Recipe from "./components/pages/Recipe";
 import AddRecipe from "./components/recipes/AddRecipe";
 import DeleteRecipe from "./components/recipes/DeleteRecipe";
 import EditRecipe from "./components/recipes/EditRecipe";
+import PinRecipe from "./components/recipes/PinRecipe";
 import AddBoard from "./components/boards/AddBoard";
 import DeleteBoard from "./components/boards/DeleteBoard";
 import EditBoard from "./components/boards/EditBoard";
@@ -57,6 +58,12 @@ class App extends Component {
                 path="/recipe/edit/:recipe"
                 component={UserIsAuthenticated(EditRecipe)}
               />
+              <Route
+                exact
+                path="/recipe/pin/:recipe"
+                component={UserIsAuthenticated(PinRecipe)}
+              />
+
               <Route
                 exact
                 path="/edit/board/:board"

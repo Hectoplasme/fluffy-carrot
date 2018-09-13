@@ -549,7 +549,7 @@ class AddRecipe extends Component {
             </Link>
             <input
               type="submit"
-              className="btn btn--accent "
+              className="btn btn--accent cursor-pointer"
               value="Enregistrer"
             />
           </ModalFooter>

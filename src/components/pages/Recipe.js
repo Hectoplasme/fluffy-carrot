@@ -65,10 +65,13 @@ class Recipe extends Component {
                     Partager
                   </button>
                   {auth.uid ? (
-                    <button className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0">
+                    <Link
+                      to={`/recipe/pin/${recipe.id}`}
+                      className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0 no-underline"
+                    >
                       <i className="fas fa-thumbtack icon" />
                       Enregistrer
-                    </button>
+                    </Link>
                   ) : (
                     <Link
                       to="/login"

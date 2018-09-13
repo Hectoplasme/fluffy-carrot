@@ -9,23 +9,31 @@ class Recipe extends Component {
 
     if (id) {
       return (
-        <Link
-          to={`/recipe/${id}`}
-          className="group inline-block w-full m-2 p-4 after:bg-grey-light no-underline focus:outline-none"
-        >
-          <button className="btn btn--accent absolute z-10 pin-t pin-r mt-8 mr-8 p-3 hidden group-hover:block">
+        <div className="group relative block  w-full m-2 ">
+          <Link
+            to={`/recipe/pin/${id}`}
+            className="btn btn--accent absolute z-10 pin-t pin-r mt-8 mr-8 p-3 hidden group-hover:block no-underline"
+          >
             <i className="fas fa-thumbtack icon" />
             Enregistrer
-          </button>
-          <img
-            className="block h-auto w-full max-w-full rounded-lg bg-grey-light"
-            src={imgUrl}
-          />
-          <div className="mt-4 text-black font-bold">{title}</div>
-          <button className="btn-floating btn-floating--sm absolute z-10 block pin-r pin-b mr-5 mb-2 hover:bg-grey hover:text-grey-darkest hidden group-hover:block">
+          </Link>
+          <Link
+            to={`/recipe/${id}`}
+            className="inline-block p-4 after:bg-grey-light no-underline focus:outline-none"
+          >
+            <img
+              className="block h-auto w-full max-w-full rounded-lg bg-grey-light"
+              src={imgUrl}
+            />
+            <div className="mt-4 text-black font-bold">{title}</div>
+          </Link>
+          <Link
+            to={`/recipe/edit/${id}`}
+            className="btn-floating btn-floating--sm absolute z-10 block pin-r pin-b mr-5 py-2 mb-2 hover:bg-grey hover:text-grey-darkest hidden group-hover:block"
+          >
             <i className="fas fa-pen icon align-middle" />
-          </button>
-        </Link>
+          </Link>
+        </div>
       );
     } else {
       return (
