@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import classnames from "classnames";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 //Redux
 import { compose } from "redux";
@@ -9,7 +10,7 @@ import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 
 //Components
 import { Modal, ModalHeader, ModalFooter, ModalBody } from "../layout/Modal";
-import Home from "../pages/Home";
+import AddList from "./AddList";
 
 class EditRecipe extends Component {
   constructor(props) {
@@ -17,7 +18,11 @@ class EditRecipe extends Component {
 
     this.state = {
       newBoard: "",
-      showNewBoardInput: false
+      showNewBoardInput: false,
+      ingredients: [],
+      ustensils: [],
+      steps: [],
+      errors: {}
     };
 
     this.boardInput = React.createRef();
@@ -55,16 +60,239 @@ class EditRecipe extends Component {
     }
   };
 
+  updateIngredients = array => {
+    this.setState({
+      ingredients: array
+    });
+  };
+
+  updateUstensils = array => {
+    this.setState({
+      ustensils: array
+    });
+  };
+
+  updateSteps = array => {
+    this.setState({
+      steps: array
+    });
+  };
+
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   onSubmit = e => {
     e.preventDefault();
+
+    const {
+      showNewBoardInput,
+      newBoard,
+      ingredients,
+      ustensils,
+      steps
+    } = this.state;
+    //Check for error
+    const errors = {};
+
+    const regexp = RegExp(/^ *$/); //Test if the string is empty or contain only space
+
+    if (regexp.test(this.titleInput.current.value)) {
+      errors.title = "Vous n'avez pas saisi de titre.";
+    }
+
+    if (showNewBoardInput && regexp.test(newBoard)) {
+      errors.board = "Vous n'avez pas choisi de tableau.";
+    }
+
+    if (
+      (this.hoursInput.current.value === "" ||
+        this.hoursInput.current.value == 0) &&
+      (this.minutesInput.current.value === "" ||
+        this.minutesInput.current.value == 0)
+    ) {
+      errors.time = "Vous n'avez pas saisi de temps de préparation.";
+    }
+
+    if (
+      this.quantityInput.current.value === "" ||
+      this.quantityInput.current.value == 0
+    ) {
+      errors.quantity = "Vous n'avez pas saisi de quantité.";
+    }
+
+    if (ingredients.length === 0) {
+      errors.ingredients = "Vous n'avez saisi aucun ingrédient.";
+    }
+
+    if (steps.length === 0) {
+      errors.steps = "Vous n'avez entré aucune étape.";
+    }
+
+    if (Object.keys(errors).length !== 0) {
+      this.setState({
+        errors: errors
+      });
+    } else {
+      //Create the keywords array from string
+      const keywordsArray = this.keywordsInput.current.value
+        .split(/,\s?/)
+        .filter(item => item !== "");
+
+      const { recipe, firestore, auth, history, profile } = this.props;
+
+      const newRecipe = {
+        title: this.titleInput.current.value,
+        description: this.descriptionInput.current.value,
+        difficulty: this.difficultyInput.current.value,
+        time: {
+          hours: this.hoursInput.current.value,
+          minutes: this.minutesInput.current.value
+        },
+        quantity: this.quantityInput.current.value,
+        keywords: keywordsArray,
+        ustensils,
+        ingredients,
+        steps
+      };
+
+      //If the recipe doesn't go in another board, we doesn't need to create a new one or to delete refs
+      if (recipe.board === this.boardInput.current.value) {
+        firestore
+          .update({ collection: "recipes", doc: recipe.id }, newRecipe)
+          .then(() => {
+            history.push(`/recipe/${recipe.id}`);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } else if (this.boardInput.current.value != "board-new") {
+        const newBoardValue = this.boardInput.current.value;
+        const oldBoardValue = recipe.board;
+
+        //If the board change but it exists already
+        //First update the recipe
+        firestore
+          .update(
+            { collection: "recipes", doc: recipe.id },
+            { ...newRecipe, board: this.boardInput.current.value }
+          )
+          .then(() => {
+            //then update the new recipe board adding the recipe
+            const newBoardObj = profile.boards.find(
+              boardObj => boardObj.id === newBoardValue
+            );
+            const newBoardRecipes = [...newBoardObj.recipes, recipe.id];
+            newBoardObj.recipes = newBoardRecipes;
+
+            firestore
+              .update(
+                { collection: "boards", doc: newBoardValue },
+                { recipes: newBoardRecipes }
+              )
+              .then(() => {
+                //then update the first board deleting the recipe
+                const oldBoardObj = profile.boards.find(
+                  boardObj => boardObj.id === oldBoardValue
+                );
+                const oldBoardRecipes = oldBoardObj.recipes.filter(
+                  recipeItem => recipeItem != recipe.id
+                );
+                oldBoardObj.recipes = oldBoardRecipes;
+
+                firestore
+                  .update(
+                    { collection: "boards", doc: oldBoardValue },
+                    { recipes: oldBoardRecipes }
+                  )
+                  .then(() => {
+                    //then update the user boards
+                    const newUserBoards = profile.boards.filter(
+                      boardObj =>
+                        boardObj.id !== newBoardValue &&
+                        boardObj.id !== oldBoardValue
+                    );
+                    const newUserBoardsUpd = [
+                      ...newUserBoards,
+                      newBoardObj,
+                      oldBoardObj
+                    ];
+
+                    firestore
+                      .update(
+                        { collection: "users", doc: auth.uid },
+                        { boards: newUserBoardsUpd }
+                      )
+                      .then(() => history.push(`/recipe/${recipe.id}`));
+                  });
+              });
+          });
+      } else {
+        //Create the new board and add the recipe
+        const oldBoardValue = recipe.board;
+
+        firestore
+          .add(
+            { collection: "boards" },
+            { title: newBoard, author: auth.uid, recipes: [recipe.id] }
+          )
+          .then(res => {
+            const newBoardValue = res.id;
+            const newBoardObj = {
+              id: newBoardValue,
+              title: newBoard,
+              author: auth.uid,
+              recipes: [recipe.id]
+            };
+            //then update the recipe
+            firestore
+              .update(
+                { collection: "recipes", doc: recipe.id },
+                { ...newRecipe, board: newBoardValue }
+              )
+              .then(() => {
+                //then update the first board deleting the recipe
+                const oldBoardObj = profile.boards.find(
+                  boardObj => boardObj.id === oldBoardValue
+                );
+                const oldBoardRecipes = oldBoardObj.recipes.filter(
+                  recipeItem => recipeItem != recipe.id
+                );
+                oldBoardObj.recipes = oldBoardRecipes;
+
+                firestore
+                  .update(
+                    { collection: "boards", doc: oldBoardValue },
+                    { recipes: oldBoardRecipes }
+                  )
+                  .then(() => {
+                    //then update the user boards
+                    const newUserBoards = profile.boards.filter(
+                      boardObj =>
+                        boardObj.id !== newBoardValue &&
+                        boardObj.id !== oldBoardValue
+                    );
+                    const newUserBoardsUpd = [
+                      ...newUserBoards,
+                      newBoardObj,
+                      oldBoardObj
+                    ];
+
+                    firestore
+                      .update(
+                        { collection: "users", doc: auth.uid },
+                        { boards: newUserBoardsUpd }
+                      )
+                      .then(() => history.push(`/recipe/${recipe.id}`));
+                  });
+              });
+          });
+      }
+    }
   };
 
   render() {
-    const { showNewBoardInput, newBoard } = this.state;
+    const { showNewBoardInput, newBoard, errors } = this.state;
     const { recipe, profile } = this.props;
 
     if (recipe) {
@@ -121,21 +349,18 @@ class EditRecipe extends Component {
                             value={newBoard}
                             onChange={this.onChange}
                             placeholder="Titre du nouveau tableau"
-                            className={classnames(
-                              "w-full p-3 my-2 rounded border-grey-dark border",
-                              {
-                                hidden: !showNewBoardInput
-                                // "border-red border-2": errors.board,
-                                // "border-grey-dark border": !errors.board
-                              }
-                            )}
+                            className={classnames("w-full p-3 my-2 rounded", {
+                              hidden: !showNewBoardInput,
+                              "border-red border-2": errors.board,
+                              "border-grey-dark border": !errors.board
+                            })}
                           />
                         )}
-                        {/* {errors.board && (
+                        {errors.board && (
                           <span className="text-red text-sm italic">
                             {errors.board}
                           </span>
-                        )} */}
+                        )}
                       </div>
                     )}
                   </div>
@@ -154,19 +379,16 @@ class EditRecipe extends Component {
                       defaultValue={recipe.title}
                       ref={this.titleInput}
                       placeholder="Risotto au poulet"
-                      className={classnames(
-                        "w-full p-3 my-2 rounded border border-grey-dark",
-                        {
-                          // "border border-grey-dark": !errors.title,
-                          // "border-red border-2": errors.title
-                        }
-                      )}
+                      className={classnames("w-full p-3 my-2 rounded", {
+                        "border border-grey-dark": !errors.title,
+                        "border-red border-2": errors.title
+                      })}
                     />
-                    {/* {errors.title && (
-                    <span className="text-red text-sm italic">
-                      {errors.title}
-                    </span>
-                  )} */}
+                    {errors.title && (
+                      <span className="text-red text-sm italic">
+                        {errors.title}
+                      </span>
+                    )}
                   </div>
 
                   {/* @field description */}
@@ -224,14 +446,12 @@ class EditRecipe extends Component {
                       className={classnames(
                         "inline-block w-12 py-3 px-3 my-2 mr-2 rounded text-center border border-grey-dark",
                         {
-                          // "border border-grey-dark": !errors.time,
-                          // "border-red border-2": errors.time
+                          "border border-grey-dark": !errors.time,
+                          "border-red border-2": errors.time
                         }
                       )}
                     />
-                    <span
-                    // className={ classnames({ "text-red": errors.time })}
-                    >
+                    <span className={classnames({ "text-red": errors.time })}>
                       heures
                     </span>
                     <br className="sm:hidden" />
@@ -245,19 +465,19 @@ class EditRecipe extends Component {
                       className={classnames(
                         "inline-block w-12 py-3 px-3 my-2 mr-2 sm:ml-2 rounded text-center border border-grey-dark",
                         {
-                          // "border border-grey-dark": !errors.time,
-                          // "border-red border-2": errors.time
+                          "border border-grey-dark": !errors.time,
+                          "border-red border-2": errors.time
                         }
                       )}
                     />
-                    <span
-                    // className={classnames({ "text-red": errors.time })}
-                    >
+                    <span className={classnames({ "text-red": errors.time })}>
                       minutes
                     </span>
-                    {/* {errors.time && (
-                    <div className="text-red text-sm italic">{errors.time}</div>
-                  )} */}
+                    {errors.time && (
+                      <div className="text-red text-sm italic">
+                        {errors.time}
+                      </div>
+                    )}
                   </div>
 
                   {/* @field quantity */}
@@ -270,7 +490,7 @@ class EditRecipe extends Component {
                     </label>
 
                     <span
-                    // className={classnames({ "text-red": errors.quantity })}
+                      className={classnames({ "text-red": errors.quantity })}
                     >
                       Pour
                     </span>
@@ -281,32 +501,58 @@ class EditRecipe extends Component {
                       ref={this.quantityInput}
                       placeholder="x"
                       className={classnames(
-                        "inline-block w-12 py-3 px-3 my-2 mx-2 rounded text-center border border-grey-dark",
+                        "inline-block w-12 py-3 px-3 my-2 mx-2 rounded text-center ",
                         {
-                          // "border-red border-2": errors.quantity,
-                          // "border border-grey-dark": !errors.quantity
+                          "border-red border-2": errors.quantity,
+                          "border border-grey-dark": !errors.quantity
                         }
                       )}
                     />
                     <span
-                    // className={classnames({ "text-red": errors.quantity })}
+                      className={classnames({ "text-red": errors.quantity })}
                     >
                       personnes
                     </span>
-                    {/* {errors.quantity && (
-                    <div className="text-red text-sm italic">
-                      {errors.quantity}
-                    </div>
-                  )} */}
+                    {errors.quantity && (
+                      <div className="text-red text-sm italic">
+                        {errors.quantity}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* @field ingredients */}
 
+              <AddList
+                title="Ingrédient(s)"
+                placeholder="1 cuillère à soupe de sucre"
+                labelButton="Ajouter un ingrédient"
+                items={recipe.ingredients}
+                update={this.updateIngredients}
+                error={errors.ingredients}
+              />
+
               {/* @field ustensils */}
+              <AddList
+                title="Ustensile(s)"
+                placeholder="Micro-onde"
+                labelButton="Ajouter un ustensile"
+                items={recipe.ustensils}
+                update={this.updateUstensils}
+                error={errors.ustensils}
+              />
 
               {/* @field steps */}
+              <AddList
+                step
+                title="Etapes de la préparation"
+                placeholder="Coupez les oignons"
+                labelButton="Ajouter une étape"
+                items={recipe.steps}
+                update={this.updateSteps}
+                error={errors.steps}
+              />
 
               {/* @field keywords */}
               <div className="mb-4 pt-8 px-4 md:px-8">
@@ -330,7 +576,12 @@ class EditRecipe extends Component {
               </div>
             </ModalBody>
             <ModalFooter>
-              <button className="btn mr-2">Supprimer</button>
+              <Link
+                to={`/recipe/delete/${recipe.id}`}
+                className="btn mr-2 no-underline"
+              >
+                Supprimer
+              </Link>
               <button className="btn ml-auto mr-2">Annuler</button>
               <button className="btn btn--accent ">Enregistrer</button>
             </ModalFooter>

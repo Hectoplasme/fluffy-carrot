@@ -8,8 +8,8 @@ import { connect } from "react-redux";
 import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 
 const RecipeUserInfos = props => {
-  const { user, board, auth } = props;
-  if (user && board) {
+  const { userId, boardId, user, board, auth } = props;
+  if (userId && boardId && user && board) {
     return (
       <div className="flex items-center mb-4">
         <Link

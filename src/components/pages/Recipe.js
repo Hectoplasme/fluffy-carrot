@@ -13,6 +13,13 @@ import RecipeUserInfos from "./recipe-parts/recipeUserInfos";
 // import Recipes from "../recipes/Recipes";
 
 class Recipe extends Component {
+  componentWillReceiveProps(props) {
+    const { auth, recipe, recipeExists, history } = props;
+    if (!recipeExists) {
+      history.push("/");
+    }
+  }
+
   render() {
     const { recipe, auth } = this.props;
 
@@ -256,6 +263,8 @@ export default compose(
   ]),
   connect(({ firestore: { ordered }, firebase }, props) => ({
     recipe: ordered.recipe && ordered.recipe[0],
+    recipeExists:
+      !!ordered.recipe && !!ordered.recipe[0] && !!ordered.recipe[0].id,
     auth: firebase.auth
   }))
 )(Recipe);

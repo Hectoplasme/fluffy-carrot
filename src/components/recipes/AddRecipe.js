@@ -163,7 +163,7 @@ class AddRecipe extends Component {
                             : [recipeId]
                         }
                       )
-                      .then(() => history.push("/"))
+                      .then(() => history.push(`/recipe/${recipeId}`))
                       .catch(err => console.log(err));
                   });
               });
@@ -206,7 +206,7 @@ class AddRecipe extends Component {
                         : [recipeId]
                     }
                   )
-                  .then(() => history.push("/"))
+                  .then(() => history.push(`/recipe/${recipeId}`))
                   .catch(err => console.log(err));
               });
           });

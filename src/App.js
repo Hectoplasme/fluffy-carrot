@@ -49,7 +49,7 @@ class App extends Component {
               <Route exact path="/share/:id" component={Share} />
               <Route
                 exact
-                path="/delete/recipe/:recipe"
+                path="/recipe/delete/:recipe"
                 component={UserIsAuthenticated(DeleteRecipe)}
               />
               <Route
@@ -80,7 +80,12 @@ class App extends Component {
               />
 
               <Route exact path="/:id/board/:board" component={Board} />
-              <Route path="/:id" render={props => <Profile {...props} />} />
+              <Route
+                exact
+                path="/:id"
+                render={props => <Profile {...props} />}
+              />
+              <Route component={Home} />
             </Switch>
           </div>
         </Router>

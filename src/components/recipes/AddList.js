@@ -5,8 +5,29 @@ import PropTypes from "prop-types";
 class AddList extends Component {
   state = {
     itemNew: "",
-    items: []
+    items: [],
+    itemsFromParent: false
   };
+
+  static getDerivedStateFromProps(props, state) {
+    const { items } = props;
+    const { itemsFromParent } = state;
+    const newState = {};
+    if (items && !itemsFromParent) {
+      items.map((item, i) => {
+        newState[`item-${i + 1}`] = item;
+      });
+      //Return list to parent component state
+      props.update(items);
+      return {
+        ...newState,
+        items: ["", ...items],
+        itemsFromParent: true
+      };
+    } else {
+      return null;
+    }
+  }
 
   onChange = e => {
     this.setState({
@@ -34,6 +55,7 @@ class AddList extends Component {
         key !== "adding" &&
         key !== "itemNew" &&
         key !== `item-${i}` &&
+        key !== "itemsFromParent" &&
         key !== item
       ) {
         arrayItems.push(state[key]);
@@ -44,7 +66,7 @@ class AddList extends Component {
           `textarea[name=${item}]`
         ).value;
         arrayItems.push(elementValue);
-      } else if (!adding && key !== "itemNew") {
+      } else if (!adding && key !== "itemNew" && key !== "itemsFromParent") {
         arrayItems.push(this.inputNew.value);
       }
     }
@@ -227,6 +249,7 @@ AddList.propTypes = {
   title: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   labelButton: PropTypes.string.isRequired,
+  items: PropTypes.array,
   update: PropTypes.func.isRequired,
   error: PropTypes.string
 };
