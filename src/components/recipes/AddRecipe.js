@@ -124,6 +124,8 @@ class AddRecipe extends Component {
         ingredients,
         steps
       };
+
+      //Add the recipe to the firestore
       //If the board is a new board
       if (board === "board-new") {
         //First create the new board
@@ -517,7 +519,7 @@ class AddRecipe extends Component {
               error={errors.steps}
             />
 
-            {/* @field tags */}
+            {/* @field keywords */}
             <div className="mb-4 pt-8 px-4 md:px-8">
               <label htmlFor="tag" className="block font-bold mb-2 text-lg">
                 Mots clés

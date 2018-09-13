@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 //Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { firestoreConnect } from "react-redux-firebase";
+import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 
 //Components
 import List from "../layout/List";
@@ -14,7 +14,7 @@ import RecipeUserInfos from "./recipe-parts/recipeUserInfos";
 
 class Recipe extends Component {
   render() {
-    const { recipe } = this.props;
+    const { recipe, auth } = this.props;
 
     return (
       <div
@@ -42,9 +42,14 @@ class Recipe extends Component {
                     <i className=" fas fa-chevron-left inline-block -ml-1 -mt-1 mr-2 text-2xl align-middle" />
                     <span> Accueil</span>
                   </Link>
-                  <button className="btn-floating h-12 w-12 text-2xl mr-2 ml-2">
-                    <i className="fas fa-pen icon" />
-                  </button>
+                  {auth.uid === recipe.user && (
+                    <Link
+                      to={`/recipe/edit/${recipe.id}`}
+                      className="btn-floating h-12 w-12 text-2xl mr-2 ml-2"
+                    >
+                      <i className="fas fa-pen icon" />
+                    </Link>
+                  )}
                   <button className="btn-floating h-12 w-12 text-2xl mr-2 sm:hidden">
                     <i className="fas fa-share-alt icon" />
                   </button>
@@ -52,10 +57,20 @@ class Recipe extends Component {
                     <i className="fas fa-share-alt icon" />
                     Partager
                   </button>
-                  <button className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0">
-                    <i className="fas fa-thumbtack icon" />
-                    Enregistrer
-                  </button>
+                  {auth.uid ? (
+                    <button className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0">
+                      <i className="fas fa-thumbtack icon" />
+                      Enregistrer
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="btn btn--accent absolute pin-r mr-16 mt-20 sm:relative sm:pin-none sm:mt-0 sm:mr-0 no-underline"
+                    >
+                      <i className="fas fa-thumbtack icon" />
+                      Enregistrer
+                    </Link>
+                  )}
                 </div>
 
                 <div className="flex flex-strech flex-col md:flex-row mb-4">
@@ -225,10 +240,13 @@ class Recipe extends Component {
 
 Recipe.propTypes = {
   firestore: PropTypes.object.isRequired,
+  firebase: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
   recipe: PropTypes.object
 };
 
 export default compose(
+  firebaseConnect(),
   firestoreConnect(props => [
     {
       collection: "recipes",
@@ -236,7 +254,8 @@ export default compose(
       doc: props.match.params.recipe
     }
   ]),
-  connect(({ firestore: { ordered } }, props) => ({
-    recipe: ordered.recipe && ordered.recipe[0]
+  connect(({ firestore: { ordered }, firebase }, props) => ({
+    recipe: ordered.recipe && ordered.recipe[0],
+    auth: firebase.auth
   }))
 )(Recipe);

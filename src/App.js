@@ -54,7 +54,7 @@ class App extends Component {
               />
               <Route
                 exact
-                path="/edit/recipe/:recipe"
+                path="/recipe/edit/:recipe"
                 component={UserIsAuthenticated(EditRecipe)}
               />
               <Route
