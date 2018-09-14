@@ -66,7 +66,7 @@ class App extends Component {
 
               <Route
                 exact
-                path="/edit/board/:board"
+                path="/board/edit/:board"
                 component={UserIsAuthenticated(EditBoard)}
               />
               <Route

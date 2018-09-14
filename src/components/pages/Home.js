@@ -14,7 +14,7 @@ class Home extends Component {
   render() {
     const { recipes } = this.props;
     if (recipes) {
-      return <Recipes recipes={recipes} />;
+      return <Recipes home recipes={recipes} />;
     } else {
       return <Recipes recipes={[]} />;
     }

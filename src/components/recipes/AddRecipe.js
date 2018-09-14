@@ -569,9 +569,6 @@ export default compose(
   firestoreConnect(),
   connect(state => ({
     profile: state.firebase.profile,
-    auth: state.firebase.auth,
-    board: state.firebase.ordered.boards && state.firebase.ordered.boards[0]
+    auth: state.firebase.auth
   }))
 )(AddRecipe);
-
-// export default firestoreConnect()(AddRecipe);

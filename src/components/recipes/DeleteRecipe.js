@@ -58,47 +58,6 @@ class DeleteRecipe extends Component {
               .then(() => history.push("/"));
           });
       });
-
-    // const oldBoard = profile.boards.find(boardObj => boardObj.id === boardId);
-    // console.log(oldBoard);
-    // const newBoardRecipes = oldBoard.recipes.filter(
-    //   recipeItem => recipeItem !== recipeId
-    // );
-
-    // console.log(newBoardRecipes);
-    // oldBoard.recipes = newBoardRecipes;
-    // console.log(oldBoard);
-    // firestore.delete({ collection: "recipes", doc: recipe.id }).then(() => {
-    //   const oldBoard = profile.boards.find(boardObj => boardObj.id === boardId);
-    //   const newBoardRecipes = oldBoard.recipes.filter(
-    //     recipeItem => recipeItem.id !== recipeId
-    //   );
-    //   oldBoard.recipes = newBoardRecipes;
-
-    //   firestore
-    //     .update(
-    //       { collection: "boards", doc: boardId },
-    //       { recipes: newBoardRecipes }
-    //     )
-    //     .then(() => {
-    //       const userBoards = profile.boards.filter(
-    //         boardObj => boardObj.id !== boardId
-    //       );
-    //       const newUserBoards = [...userBoards, oldBoard];
-    //       const newUserRecipes = profile.recipes.filter(
-    //         recipeItem => recipeItem !== recipeId
-    //       );
-
-    //       firestore
-    //         .update(
-    //           { collection: "users", doc: auth.uid },
-    //           { boards: newUserBoards, recipes: newUserRecipes }
-    //         )
-    //         .then(() => {
-    //           history.push("/");
-    //         });
-    //     });
-    // });
   };
 
   render() {

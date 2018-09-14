@@ -1,12 +1,27 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import classnames from "classnames";
 
 import { Link } from "react-router-dom";
 
 class Recipe extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      imageLoaded: false
+    };
+
+    this.image = React.createRef();
+  }
+
+  handleImageLoaded = () => {
+    this.setState({ imageLoaded: true });
+  };
+
   render() {
     const { id, imgUrl, title } = this.props;
-
+    const { imageLoaded } = this.state;
     if (id) {
       return (
         <div className="group relative block  w-full m-2 ">
@@ -19,11 +34,26 @@ class Recipe extends Component {
           </Link>
           <Link
             to={`/recipe/${id}`}
-            className="inline-block p-4 after:bg-grey-light no-underline focus:outline-none"
+            className="inline-block w-full p-4 after:bg-grey-light no-underline focus:outline-none"
           >
+            {!imageLoaded && (
+              <div
+                className="block h-auto w-full max-w-full rounded-lg bg-grey-light"
+                style={{
+                  height: `${Math.random() * 400 + 200}px`
+                }}
+              />
+            )}
             <img
-              className="block h-auto w-full max-w-full rounded-lg bg-grey-light"
+              className={classnames(
+                "block h-auto w-full max-w-full rounded-lg bg-grey-light",
+                {
+                  hidden: !imageLoaded
+                }
+              )}
               src={imgUrl}
+              ref={this.image}
+              onLoad={this.handleImageLoaded}
             />
             <div className="mt-4 text-black font-bold">{title}</div>
           </Link>

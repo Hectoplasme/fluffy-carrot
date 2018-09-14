@@ -17,7 +17,7 @@ class Recipes extends Component {
       500: 1
     };
 
-    const { recipes, thin, add } = this.props;
+    const { recipes, thin, add, home } = this.props;
 
     const AddButton = (
       <Link
@@ -37,7 +37,7 @@ class Recipes extends Component {
       recipes.unshift("");
     }
 
-    if (recipes.length > 0) {
+    if (recipes && recipes.length > 0) {
       return (
         <Masonry
           breakpointCols={breakpointColumnsObj}
