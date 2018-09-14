@@ -43,6 +43,7 @@ class Navbar extends Component {
 
   render() {
     const { isAuthenticated } = this.state;
+    const { profile } = this.props;
     return (
       <div className="flex items-center px-4 py-3 border-b border-grey-lighter">
         <NavLink
@@ -63,7 +64,7 @@ class Navbar extends Component {
             Accueil
           </NavLink>
           <NavLink
-            to={isAuthenticated ? "/user" : "/login"}
+            to={isAuthenticated && profile ? `/${profile.slug}` : "/login"}
             className="link link--icon"
             activeClassName="active"
           >
@@ -128,6 +129,7 @@ Navbar.propTypes = {
 export default compose(
   firebaseConnect(),
   connect((state, props) => ({
-    auth: state.firebase.auth
+    auth: state.firebase.auth,
+    profile: state.firebase.profile
   }))
 )(Navbar);

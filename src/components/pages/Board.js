@@ -90,7 +90,7 @@ Board.propTypes = {
   firebase: PropTypes.object.isRequired,
   recipes: PropTypes.array,
   auth: PropTypes.object,
-  users: PropTypes.array,
+  user: PropTypes.object,
   board: PropTypes.object
 };
 
