@@ -1,231 +1,223 @@
 import React, { Component } from "react";
-import classnames from "classnames";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import classnames from "classnames";
 
 //Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
 
 //Components
+import Page404 from "../pages/404";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "../layout/Modal";
+import Spinner from "../layout/Spinner";
 
 class PinRecipe extends Component {
-  state = {
-    board: "board-new",
-    newBoard: "",
-    showNewBoardInput: false,
-    errors: {},
-    loaded: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      recipe: {},
+      recipeExists: true,
+      board: "board-new",
+      newBoard: "",
+      showNewBoard: true,
+      userBoards: [],
+      userBoardsLoaded: false,
+      error: ""
+    };
+  }
+  componentDidMount() {
+    const { firestore, auth } = this.props;
+    const { userBoardsLoaded, recipe, recipeExists } = this.state;
 
-  static getDerivedStateFromProps(props, state) {
-    const { profile } = props;
-    const { loaded } = state;
-
-    if (profile && profile.boards && !loaded) {
-      console.log("c'est le problème");
-      return {
-        board: profile.boards[0] ? profile.boards[0].id : "board-new",
-        showNewBoardInput: profile.boards[0] ? false : true,
-        loaded: true
-      };
-    } else {
-      return null;
+    //Get the user boards
+    if (auth && !userBoardsLoaded) {
+      firestore.get(`users/${auth.uid}/boards`).then(res => {
+        if (res.docs) {
+          const userBoards = [];
+          res.docs.forEach(board => {
+            userBoards.push({
+              id: board.id,
+              ...board.data()
+            });
+          });
+          this.setState({
+            board: userBoards[0].id,
+            showNewBoard: false,
+            userBoards,
+            userBoardsLoaded: true
+          });
+        }
+      });
     }
+
+    if (!recipe && recipeExists) {
+      firestore
+        .get({ collection: "recipes", doc: this.props.match.params.recipeId })
+        .then(res => {
+          this.updateRecipe(res);
+        });
+    }
+
+    //get the recipe and listen the change
+    firestore.setListener(
+      { collection: "recipes", doc: this.props.match.params.recipeId },
+      res => this.updateRecipe(res)
+    );
   }
 
+  componentWillUnmount() {
+    const { firestore } = this.props;
+
+    firestore.unsetListener(
+      { collection: "recipes", doc: this.props.match.params.recipeId },
+      res => this.updateRecipe(res)
+    );
+  }
+
+  updateRecipe = res => {
+    if (res.data()) {
+      this.setState({ recipe: { id: res.id, ...res.data() } });
+    } else {
+      this.setState({ recipeExists: false });
+    }
+  };
+
   onChange = e => {
-    if (e.target.name == "board" && e.target.value == "board-new") {
+    const { showNewBoard } = this.state;
+    if (e.target.name === "board" && e.target.value == "board-new") {
+      this.setState({ showNewBoard: true, board: e.target.value });
+    } else if (
+      e.target.name === "board" &&
+      e.target.value != "board-new" &&
+      showNewBoard
+    ) {
       this.setState({
-        board: "board-new",
-        showNewBoardInput: true
-      });
-    } else if (e.target.name == "board") {
-      this.setState({
+        showNewBoard: false,
         board: e.target.value,
-        showNewBoardInput: false,
         newBoard: ""
       });
-    } else {
-      this.setState({ [e.target.name]: e.target.value });
     }
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   onSubmit = e => {
     e.preventDefault();
-    const { recipe, firestore, auth, profile, history } = this.props;
-    const { board, newBoard, showNewBoardInput } = this.state;
-    //check for errors
-    const errors = {};
 
+    const { firestore, profile, auth, history } = this.props;
+    const { board, newBoard, showNewBoard, recipe } = this.state;
+    //Check for errors
     const regexp = RegExp(/^ *$/); //Test if the string is empty or contain only space
 
-    if (showNewBoardInput && regexp.test(newBoard)) {
-      this.setState({
-        errors: { board: "Vous n'avez pas choisi de tableau." }
-      });
+    if (showNewBoard && regexp.test(newBoard)) {
+      this.setState({ error: "Vous n'avez pas choisi de tableau" });
     } else {
       const newRecipe = {
+        user: profile.slug,
+        imgUrl: recipe.imgUrl,
         title: recipe.title,
         description: recipe.description,
-        user: auth.uid,
         difficulty: recipe.difficulty,
-        time: {
-          hours: recipe.time.hours,
-          minutes: recipe.time.minutes
-        },
+        time: { hours: recipe.time.hours, minutes: recipe.time.minutes },
         quantity: recipe.quantity,
-        keywords: recipe.keywords,
-        imgUrl: recipe.imgUrl,
-        ustensils: recipe.ustensils,
         ingredients: recipe.ingredients,
-        steps: recipe.steps
+        ustensils: recipe.ustensils,
+        steps: recipe.steps,
+        keywords: recipe.keywords ? recipe.keywords : []
       };
-      if (showNewBoardInput) {
-        //Create a new board
-        const newBoardObj = { title: newBoard, author: auth.uid };
 
-        firestore.add({ collection: "boards" }, newBoardObj).then(res => {
-          //then create the recipe
-          const boardId = res.id;
-
-          firestore
-            .add({ collection: "recipes" }, { board: boardId, ...newRecipe })
-            .then(res => {
-              //then update the board with the recipe id
-              const recipeId = res.id;
-              firestore
-                .update(
-                  { collection: "boards", doc: boardId },
-                  { recipes: [recipeId] }
-                )
-                .then(() => {
-                  //then add the board and the recipe in the user data
-                  const newBoardObj = {
-                    id: boardId,
-                    title: newBoard,
-                    recipes: [recipeId]
-                  };
-                  firestore
-                    .update(
-                      { collection: "users", doc: auth.uid },
-                      {
-                        boards: profile.boards
-                          ? [...profile.boards, newBoardObj]
-                          : [newBoardObj],
-                        recipes: profile.recipes
-                          ? [...profile.recipes, recipeId]
-                          : [recipeId]
-                      }
-                    )
-                    .then(() => history.push(`/recipe/${recipeId}`))
-                    .catch(err => console.log(err));
-                });
-            });
-        });
+      if (showNewBoard) {
+        //   //If the board doesn't exist yet
+        //   //add the board
+        firestore
+          .add(
+            { collection: "boards" },
+            { author: profile.slug, title: newBoard }
+          )
+          .then(res => {
+            //and store it in a subCollection of the user
+            const boardId = res.id;
+            firestore
+              .set(`users/${auth.uid}/boards/${boardId}`, {
+                title: newBoard
+              })
+              .then(() => {
+                //           //then update the recipe
+                firestore
+                  .add(
+                    { collection: "recipes" },
+                    { board: boardId, ...newRecipe }
+                  )
+                  .then(res => history.push(`/recipe/${res.id}`))
+                  .catch(err => console.log(err));
+              })
+              .catch(err => console.log(err));
+          })
+          .catch(err => console.log(err));
       } else {
-        //First create the recipe
-
         firestore
           .add({ collection: "recipes" }, { board: board, ...newRecipe })
-          .then(res => {
-            //Then store the recipe id in the board
-            const recipeId = res.id;
-            const recipes = profile.boards.find(
-              boardObj => boardObj.id === board
-            ).recipes;
-
-            firestore
-              .update(
-                { collection: "boards", doc: board },
-                { recipes: [...recipes, recipeId] }
-              )
-              .then(() => {
-                //Create a new boards array to update the user data
-                const boardUpdated = profile.boards.find(
-                  boardObj => boardObj.id === board
-                );
-                boardUpdated.recipes = [...recipes, recipeId];
-                const newBoardsArray = profile.boards.filter(
-                  boardObj => boardObj.id !== board
-                );
-                newBoardsArray.push(boardUpdated);
-
-                //then update the user
-                firestore
-                  .update(
-                    { collection: "users", doc: auth.uid },
-                    {
-                      boards: newBoardsArray,
-                      recipes: profile.recipes
-                        ? [...profile.recipes, recipeId]
-                        : [recipeId]
-                    }
-                  )
-                  .then(() => history.push(`/recipe/${recipeId}`))
-                  .catch(err => console.log(err));
-              });
-          });
+          .then(res => history.push(`/recipe/${res.id}`))
+          .catch(err => console.log(err));
       }
     }
   };
 
   render() {
-    const { profile, recipe } = this.props;
-    const { errors, board, newBoard, showNewBoardInput } = this.state;
-
-    if (recipe) {
+    const { profile } = this.props;
+    const {
+      error,
+      board,
+      userBoards,
+      newBoard,
+      showNewBoard,
+      recipeExists,
+      recipe
+    } = this.state;
+    if (recipe.id && recipeExists && profile) {
       return (
         <form onSubmit={this.onSubmit}>
           <Modal thin>
             <ModalHeader>Enregistrer une recette</ModalHeader>
             <ModalBody>
+              {/* @field Board */}
               <label htmlFor="board" className="block font-bold mb-1 text-lg">
                 Choisir un tableau
-              </label>
-              <i className="fas fa-chevron-down absolute pin-r mr-12 mt-6 text-grey-darker" />
-              {/* Wait the board list from the profile before render it */}
-              {profile.boards && (
-                <div>
-                  <select
-                    name="board"
-                    className="w-full p-3 my-2 rounded bg-grey-light font-bold cursor-pointer appearance-none text-dark"
-                    value={board}
+                <i className="fas fa-chevron-down absolute pin-r mr-8 mt-10 text-grey-darker" />
+                <select
+                  name="board"
+                  className="w-full p-3 my-2 rounded bg-grey-light font-bold cursor-pointer appearance-none text-dark"
+                  value={board}
+                  onChange={this.onChange}
+                >
+                  {userBoards.map(board => (
+                    <option value={board.id} key={`board-${board.id}`}>
+                      {board.title}
+                    </option>
+                  ))}
+                  <option value="board-new">Créer un nouveau tableau</option>
+                </select>
+                {showNewBoard && (
+                  <input
+                    type="text"
+                    name="newBoard"
+                    value={newBoard}
                     onChange={this.onChange}
-                  >
-                    {profile.boards
-                      ? profile.boards.map((board, i) => (
-                          <option key={`board-${i}`} value={board.id}>
-                            {board.title}
-                          </option>
-                        ))
-                      : null}
-                    <option value="board-new">Créer un nouveau tableau</option>
-                  </select>
-
-                  {showNewBoardInput && (
-                    <input
-                      type="text"
-                      name="newBoard"
-                      value={newBoard}
-                      onChange={this.onChange}
-                      placeholder="Titre du nouveau tableau"
-                      className={classnames("w-full p-3 my-2 rounded", {
-                        hidden: !showNewBoardInput,
-                        "border-red border-2": errors.board,
-                        "border-grey-dark border": !errors.board
-                      })}
-                    />
-                  )}
-                  {errors.board && (
-                    <span className="text-red text-sm italic">
-                      {errors.board}
-                    </span>
-                  )}
-                </div>
-              )}
+                    placeholder="légumes colorés"
+                    className={classnames("w-full p-3 my-2 rounded", {
+                      hidden: !showNewBoard,
+                      "border-red border": error,
+                      "border-grey-dark border": !error
+                    })}
+                  />
+                )}
+                {error && (
+                  <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
+                    {error}
+                  </span>
+                )}
+              </label>
             </ModalBody>
             <ModalFooter>
               <Link
@@ -234,52 +226,42 @@ class PinRecipe extends Component {
               >
                 Annuler
               </Link>
-              <button className="btn btn--accent cursor-pointer">
-                Enregistrer
-              </button>
+              <input
+                type="submit"
+                value="Continuer"
+                className="btn btn--accent cursor-pointer"
+              />
             </ModalFooter>
           </Modal>
         </form>
       );
+    } else if (recipe && !recipeExists) {
+      return <Page404 />;
     } else {
       return (
         <Modal thin>
           <ModalHeader>Enregistrer une recette</ModalHeader>
-          <ModalBody />
-          <ModalFooter>
-            <Link
-              to={`/recipe/${this.props.match.params.id}`}
-              className="btn ml-auto mr-2 no-underline"
-            >
-              Annuler
-            </Link>
-          </ModalFooter>
+          <ModalBody>
+            <Spinner />
+          </ModalBody>
         </Modal>
       );
     }
   }
 }
 
-PinRecipe.propTypes = {
+PinRecipe.propTyps = {
   firestore: PropTypes.object.isRequired,
   firebase: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired,
-  profile: PropTypes.object,
-  recipe: PropTypes.object
+  auth: PropTypes.object,
+  profile: PropTypes.object
 };
 
 export default compose(
+  firestoreConnect(),
   firebaseConnect(),
-  firestoreConnect(props => [
-    {
-      collection: "recipes",
-      storeAs: "recipe",
-      doc: props.match.params.recipe
-    }
-  ]),
-  connect(({ firestore: { ordered }, firebase }, props) => ({
-    recipe: ordered.recipe && ordered.recipe[0],
-    auth: firebase.auth,
-    profile: firebase.profile
+  connect(state => ({
+    profile: state.firebase.profile,
+    auth: state.firebase.auth
   }))
 )(PinRecipe);

@@ -13,6 +13,8 @@ import Home from "./components/pages/Home";
 import Profile from "./components/pages/Profile";
 import Board from "./components/pages/Board";
 import Recipe from "./components/pages/Recipe";
+import Search from "./components/pages/Search";
+import About from "./components/pages/About";
 
 //Modals
 import AddRecipe from "./components/recipes/AddRecipe";
@@ -22,9 +24,7 @@ import PinRecipe from "./components/recipes/PinRecipe";
 import AddBoard from "./components/boards/AddBoard";
 import DeleteBoard from "./components/boards/DeleteBoard";
 import EditBoard from "./components/boards/EditBoard";
-import Login from "./components/users/Login";
-import Register from "./components/users/Register";
-import Share from "./components/users/Share";
+import Login from "./components/auth/Login";
 
 class App extends Component {
   render() {
@@ -32,67 +32,62 @@ class App extends Component {
       <Provider store={store}>
         <Router>
           <div className="App">
-            <Navbar />
-
+            <Route component={Navbar} />
             <Switch>
               <Route exact path="/" component={Home} />
+              <Route exact path="/about" component={About} />
+              <Route exact path="/search/:keyword" component={Search} />
+
+              {/* Recipes routes */}
               <Route
                 exact
-                path="/recipe/add/"
+                path="/recipe/add"
                 component={UserIsAuthenticated(AddRecipe)}
               />
-              <Route exact path="/recipe/:recipe" component={Recipe} />
+              <Route
+                exact
+                path="/recipe/delete/:recipeId"
+                component={UserIsAuthenticated(DeleteRecipe)}
+              />
+              <Route
+                exact
+                path="/recipe/edit/:recipeId"
+                component={UserIsAuthenticated(EditRecipe)}
+              />
+              <Route
+                exact
+                path="/pin/:recipeId"
+                component={UserIsAuthenticated(PinRecipe)}
+              />
+              <Route exact path="/recipe/:recipeId" component={Recipe} />
+
+              {/* Boards routes */}
               <Route
                 exact
                 path="/board/add/"
                 component={UserIsAuthenticated(AddBoard)}
               />
-              <Route exact path="/share/:id" component={Share} />
               <Route
                 exact
-                path="/recipe/delete/:recipe"
-                component={UserIsAuthenticated(DeleteRecipe)}
-              />
-              <Route
-                exact
-                path="/recipe/edit/:recipe"
-                component={UserIsAuthenticated(EditRecipe)}
-              />
-              <Route
-                exact
-                path="/recipe/pin/:recipe"
-                component={UserIsAuthenticated(PinRecipe)}
-              />
-
-              <Route
-                exact
-                path="/board/edit/:board"
-                component={UserIsAuthenticated(EditBoard)}
-              />
-              <Route
-                exact
-                path="/delete/board/:board"
+                path="/board/delete/:boardId"
                 component={UserIsAuthenticated(DeleteBoard)}
               />
+              <Route
+                exact
+                path="/board/edit/:boardId"
+                component={UserIsAuthenticated(EditBoard)}
+              />
+              <Route exact path="/:slug/board/:boardId" component={Board} />
 
+              {/* Login route */}
               <Route
                 exact
                 path="/login"
                 component={UserIsNotAuthenticated(Login)}
               />
-              <Route
-                exact
-                path="/register"
-                component={UserIsNotAuthenticated(Register)}
-              />
 
-              <Route exact path="/:id/board/:board" component={Board} />
-              <Route
-                exact
-                path="/:id"
-                render={props => <Profile {...props} />}
-              />
-              <Route component={Home} />
+              {/* Profile route */}
+              <Route exact path="/:slug" component={Profile} />
             </Switch>
           </div>
         </Router>

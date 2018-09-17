@@ -1,30 +1,36 @@
 import React, { Component } from "react";
-import classnames from "classnames";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import classnames from "classnames";
 
 //Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
 
 //Components
-import { Modal, ModalHeader, ModalFooter, ModalBody } from "../layout/Modal";
-import AddList from "./AddList";
+import { Modal, ModalHeader, ModalBody, ModalFooter } from "../layout/Modal";
+import AddList from "./AddListItem";
+import Page404 from "../pages/404";
+import Spinner from "../layout/Spinner";
 
 class EditRecipe extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      newBoard: "",
-      showNewBoardInput: false,
+      recipe: {},
       ingredients: [],
       ustensils: [],
       steps: [],
+      newBoard: "",
+      showNewBoard: true,
+      userBoards: [],
+      userBoardsLoaded: false,
+      recipeExists: true,
       errors: {}
     };
 
+    this.imgInput = React.createRef();
     this.boardInput = React.createRef();
     this.titleInput = React.createRef();
     this.descriptionInput = React.createRef();
@@ -35,29 +41,223 @@ class EditRecipe extends Component {
     this.keywordsInput = React.createRef();
   }
 
-  componentWillReceiveProps(props) {
-    const { auth, recipe, history } = props;
-    if (recipe && auth.uid !== recipe.user) {
-      history.push("/"); // redirect to home if not authorized
+  componentDidUpdate() {
+    const { recipe } = this.state;
+    const { profile, history } = this.props;
+
+    //Check if authorized
+    if (profile.isLoaded && (!recipe || recipe.user !== profile.slug)) {
+      history.push(`/recipe/${this.props.match.params.recipeId}`);
     }
   }
 
+  componentDidMount() {
+    const { firestore, auth } = this.props;
+    const { userBoardsLoaded, recipeExists, recipe } = this.state;
+
+    //Get the user boards
+    if (auth && !userBoardsLoaded) {
+      firestore.get(`users/${auth.uid}/boards`).then(res => {
+        if (res.docs) {
+          const userBoards = [];
+          res.docs.forEach(board => {
+            userBoards.push({
+              id: board.id,
+              ...board.data()
+            });
+          });
+          this.setState({
+            board: userBoards[0] ? userBoards[0].id : "board-new",
+            showNewBoard: false,
+            userBoards,
+            userBoardsLoaded: true
+          });
+        }
+      });
+    }
+
+    if (!recipe && recipeExists) {
+      firestore
+        .get({ collection: "recipes", doc: this.props.match.params.recipeId })
+        .then(res => {
+          this.updateRecipe(res);
+        });
+    }
+
+    //get the recipe and listen the change
+    firestore.setListener(
+      { collection: "recipes", doc: this.props.match.params.recipeId },
+      res => this.updateRecipe(res)
+    );
+  }
+
+  componentWillUnmount() {
+    const { firestore } = this.props;
+
+    firestore.unsetListener(
+      { collection: "recipes", doc: this.props.match.params.recipeId },
+      res => this.updateRecipe(res)
+    );
+  }
+
+  updateRecipe = res => {
+    if (res.data()) {
+      this.setState({ recipe: { id: res.id, ...res.data() } });
+    } else {
+      this.setState({ recipeExists: false });
+    }
+  };
+
   onBoardDropdownChange = e => {
-    const { newBoard, showNewBoardInput } = this.state;
+    const { newBoard, showNewBoard } = this.state;
     if (e.target.value == "board-new") {
       this.setState({
-        showNewBoardInput: true
+        showNewBoard: true
       });
     } else if (newBoard !== "") {
       this.setState({
         newBoard: "",
-        showNewBoardInput: false
+        showNewBoard: false
       });
-    } else if (showNewBoardInput) {
+    } else if (showNewBoard) {
       this.setState({
-        showNewBoardInput: false
+        showNewBoard: false
       });
     }
+  };
+
+  onChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  onSubmit = e => {
+    e.preventDefault();
+
+    const { newBoard, showNewBoard, ingredients, steps } = this.state;
+
+    // alert("pouet");
+
+    //check for errors
+    const errors = {};
+    const regexp = RegExp(/^ *$/); //Test if the string is empty or contain only space
+
+    if (showNewBoard && regexp.test(newBoard)) {
+      errors.board = "Vous n'avez pas choisi de tableau.";
+    }
+
+    if (regexp.test(this.titleInput.current.value)) {
+      errors.title = "Vous n'avez pas saisi de titre pour votre recette.";
+    }
+
+    if (
+      (this.hoursInput.current.value === "0" ||
+        regexp.test(this.hoursInput.current.value)) &&
+      (this.minutesInput.current.value === "0" ||
+        regexp.test(this.minutesInput.current.value))
+    ) {
+      errors.time = "Vous n'avez pas saisi de temps de préparation.";
+    }
+
+    if (
+      this.quantityInput.current.value === "0" ||
+      regexp.test(this.quantityInput.current.value)
+    ) {
+      errors.quantity = "Vous n'avez pas saisi de quantité.";
+    }
+
+    if (ingredients.length === 0) {
+      errors.ingredients = "Veuillez saisir au moins un ingrédient.";
+    }
+
+    if (steps.length === 0) {
+      errors.steps = "Veuillez saisir au moins une étape.";
+    }
+
+    //Check if the errors object is empty
+    if (Object.keys(errors).length !== 0) {
+      this.setState({ errors });
+    } else {
+      //No errors, we can go!
+      this.createRecipe();
+    }
+  };
+
+  createRecipe = () => {
+    const { firestore, profile, auth, history } = this.props;
+    const {
+      newBoard,
+      showNewBoard,
+      ingredients,
+      ustensils,
+      steps,
+      recipe
+    } = this.state;
+
+    const newRecipe = {
+      title: this.titleInput.current.value,
+      description: this.descriptionInput.current.value,
+      difficulty: this.difficultyInput.current.value,
+      time: {
+        hours: this.hoursInput.current.value,
+        minutes: this.minutesInput.current.value
+      },
+      quantity: this.quantityInput.current.value,
+      ingredients,
+      ustensils,
+      steps,
+      keywords: this.keywordsInput.current.value
+        .split(/,\s?/)
+        .filter(item => item !== "")
+    };
+
+    if (showNewBoard) {
+      //   //If the board doesn't exist yet
+      //   //add the board
+      firestore
+        .add(
+          { collection: "boards" },
+          { author: profile.slug, title: newBoard }
+        )
+        .then(res => {
+          //and store it in a subCollection of the user
+          const boardId = res.id;
+          firestore
+            .set(`users/${auth.uid}/boards/${boardId}`, {
+              title: newBoard
+            })
+            .then(() => {
+              //           //then update the recipe
+              firestore
+                .update(
+                  { collection: "recipes", doc: recipe.id },
+                  { board: boardId, ...newRecipe }
+                )
+                .then(res => history.push(`/recipe/${recipe.id}`))
+                .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
+    } else {
+      firestore
+        .update(
+          { collection: "recipes", doc: recipe.id },
+          { board: this.boardInput.current.value, ...newRecipe }
+        )
+        .then(res => history.push(`/recipe/${recipe.id}`))
+        .catch(err => console.log(err));
+    }
+  };
+
+  checkImageExists = (url, ifFalse, ifTrue) => {
+    let img = new Image();
+    img.onload = () => {
+      ifTrue();
+    };
+    img.onerror = () => {
+      ifFalse();
+    };
+    img.src = url;
   };
 
   updateIngredients = array => {
@@ -78,350 +278,133 @@ class EditRecipe extends Component {
     });
   };
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  onSubmit = e => {
-    e.preventDefault();
-
-    const {
-      showNewBoardInput,
-      newBoard,
-      ingredients,
-      ustensils,
-      steps
-    } = this.state;
-    //Check for error
-    const errors = {};
-
-    const regexp = RegExp(/^ *$/); //Test if the string is empty or contain only space
-
-    if (regexp.test(this.titleInput.current.value)) {
-      errors.title = "Vous n'avez pas saisi de titre.";
-    }
-
-    if (showNewBoardInput && regexp.test(newBoard)) {
-      errors.board = "Vous n'avez pas choisi de tableau.";
-    }
-
-    if (
-      (this.hoursInput.current.value === "" ||
-        this.hoursInput.current.value == 0) &&
-      (this.minutesInput.current.value === "" ||
-        this.minutesInput.current.value == 0)
-    ) {
-      errors.time = "Vous n'avez pas saisi de temps de préparation.";
-    }
-
-    if (
-      this.quantityInput.current.value === "" ||
-      this.quantityInput.current.value == 0
-    ) {
-      errors.quantity = "Vous n'avez pas saisi de quantité.";
-    }
-
-    if (ingredients.length === 0) {
-      errors.ingredients = "Vous n'avez saisi aucun ingrédient.";
-    }
-
-    if (steps.length === 0) {
-      errors.steps = "Vous n'avez entré aucune étape.";
-    }
-
-    if (Object.keys(errors).length !== 0) {
-      this.setState({
-        errors: errors
-      });
-    } else {
-      //Create the keywords array from string
-      const keywordsArray = this.keywordsInput.current.value
-        .split(/,\s?/)
-        .filter(item => item !== "");
-
-      const { recipe, firestore, auth, history, profile } = this.props;
-
-      const newRecipe = {
-        title: this.titleInput.current.value,
-        description: this.descriptionInput.current.value,
-        difficulty: this.difficultyInput.current.value,
-        time: {
-          hours: this.hoursInput.current.value,
-          minutes: this.minutesInput.current.value
-        },
-        quantity: this.quantityInput.current.value,
-        keywords: keywordsArray,
-        ustensils,
-        ingredients,
-        steps
-      };
-
-      //If the recipe doesn't go in another board, we doesn't need to create a new one or to delete refs
-      if (recipe.board === this.boardInput.current.value) {
-        firestore
-          .update({ collection: "recipes", doc: recipe.id }, newRecipe)
-          .then(() => {
-            history.push(`/recipe/${recipe.id}`);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      } else if (this.boardInput.current.value != "board-new") {
-        const newBoardValue = this.boardInput.current.value;
-        const oldBoardValue = recipe.board;
-
-        //If the board change but it exists already
-        //First update the recipe
-        firestore
-          .update(
-            { collection: "recipes", doc: recipe.id },
-            { ...newRecipe, board: this.boardInput.current.value }
-          )
-          .then(() => {
-            //then update the new recipe board adding the recipe
-            const newBoardObj = profile.boards.find(
-              boardObj => boardObj.id === newBoardValue
-            );
-            const newBoardRecipes = [...newBoardObj.recipes, recipe.id];
-            newBoardObj.recipes = newBoardRecipes;
-
-            firestore
-              .update(
-                { collection: "boards", doc: newBoardValue },
-                { recipes: newBoardRecipes }
-              )
-              .then(() => {
-                //then update the first board deleting the recipe
-                const oldBoardObj = profile.boards.find(
-                  boardObj => boardObj.id === oldBoardValue
-                );
-                const oldBoardRecipes = oldBoardObj.recipes.filter(
-                  recipeItem => recipeItem != recipe.id
-                );
-                oldBoardObj.recipes = oldBoardRecipes;
-
-                firestore
-                  .update(
-                    { collection: "boards", doc: oldBoardValue },
-                    { recipes: oldBoardRecipes }
-                  )
-                  .then(() => {
-                    //then update the user boards
-                    const newUserBoards = profile.boards.filter(
-                      boardObj =>
-                        boardObj.id !== newBoardValue &&
-                        boardObj.id !== oldBoardValue
-                    );
-                    const newUserBoardsUpd = [
-                      ...newUserBoards,
-                      newBoardObj,
-                      oldBoardObj
-                    ];
-
-                    firestore
-                      .update(
-                        { collection: "users", doc: auth.uid },
-                        { boards: newUserBoardsUpd }
-                      )
-                      .then(() => history.push(`/recipe/${recipe.id}`));
-                  });
-              });
-          });
-      } else {
-        //Create the new board and add the recipe
-        const oldBoardValue = recipe.board;
-
-        firestore
-          .add(
-            { collection: "boards" },
-            { title: newBoard, author: auth.uid, recipes: [recipe.id] }
-          )
-          .then(res => {
-            const newBoardValue = res.id;
-            const newBoardObj = {
-              id: newBoardValue,
-              title: newBoard,
-              author: auth.uid,
-              recipes: [recipe.id]
-            };
-            //then update the recipe
-            firestore
-              .update(
-                { collection: "recipes", doc: recipe.id },
-                { ...newRecipe, board: newBoardValue }
-              )
-              .then(() => {
-                //then update the first board deleting the recipe
-                const oldBoardObj = profile.boards.find(
-                  boardObj => boardObj.id === oldBoardValue
-                );
-                const oldBoardRecipes = oldBoardObj.recipes.filter(
-                  recipeItem => recipeItem != recipe.id
-                );
-                oldBoardObj.recipes = oldBoardRecipes;
-
-                firestore
-                  .update(
-                    { collection: "boards", doc: oldBoardValue },
-                    { recipes: oldBoardRecipes }
-                  )
-                  .then(() => {
-                    //then update the user boards
-                    const newUserBoards = profile.boards.filter(
-                      boardObj =>
-                        boardObj.id !== newBoardValue &&
-                        boardObj.id !== oldBoardValue
-                    );
-                    const newUserBoardsUpd = [
-                      ...newUserBoards,
-                      newBoardObj,
-                      oldBoardObj
-                    ];
-
-                    firestore
-                      .update(
-                        { collection: "users", doc: auth.uid },
-                        { boards: newUserBoardsUpd }
-                      )
-                      .then(() => history.push(`/recipe/${recipe.id}`));
-                  });
-              });
-          });
-      }
-    }
-  };
-
   render() {
-    const { showNewBoardInput, newBoard, errors } = this.state;
-    const { recipe, profile } = this.props;
+    const { profile } = this.props;
+    const {
+      errors,
+      userBoards,
+      newBoard,
+      showNewBoard,
+      recipeExists,
+      recipe
+    } = this.state;
 
-    if (recipe) {
+    if (recipe.id && recipeExists && profile) {
       return (
         <form onSubmit={this.onSubmit}>
           <Modal>
-            <ModalHeader>Editer une recette</ModalHeader>
+            <ModalHeader>Modifier une recette</ModalHeader>
             <ModalBody>
-              <div className="md:flex border-b border-grey-lighter">
-                <div className="flex flex-col md:inline-flex items-center md:w-1/2 mx-0 p-4">
-                  {/* The image won't be editable ! */}
+              <div className="p-4">
+                <div className="mb-4 pb-8 border-b border-grey-lighter text-center">
                   <img
+                    className="bg-grey-light rounded-lg max-w-100"
                     src={recipe.imgUrl}
-                    className="bg-grey-light rounded-lg"
-                    alt=""
+                    alt={recipe.title}
                   />
                 </div>
-                {/* @Field board */}
-                <div className="md:w-1/2 mx-0 p-4">
-                  <div className="mb-4 pb-0 border-b- border-grey-lighter">
+
+                {userBoards.length > 0 && (
+                  <div className="mb-4 pb-8 border-b border-grey-lighter">
+                    {/* @field Board */}
                     <label
                       htmlFor="board"
                       className="block font-bold mb-1 text-lg"
                     >
-                      Tableau
-                    </label>
-                    <i className="fas fa-chevron-down absolute pin-r mr-12 mt-6 text-grey-darker" />
-                    {/* Wait the board list from the profile before render it */}
-                    {profile.boards && (
-                      <div>
-                        <select
-                          name="board"
-                          className="w-full p-3 my-2 rounded bg-grey-light font-bold cursor-pointer appearance-none text-dark"
-                          defaultValue={recipe.board}
-                          ref={this.boardInput}
-                          onChange={this.onBoardDropdownChange}
+                      Choisir un tableau
+                      <i className="fas fa-chevron-down absolute pin-r mr-12 mt-10 text-grey-darker" />
+                      <select
+                        name="board"
+                        defaultValue={recipe.board}
+                        ref={this.boardInput}
+                        onChange={this.onBoardDropdownChange}
+                        className="w-full p-3 my-2 rounded bg-grey-light font-bold cursor-pointer appearance-none text-dark"
+                      >
                         >
-                          {profile.boards
-                            ? profile.boards.map((board, i) => (
-                                <option key={`board-${i}`} value={board.id}>
-                                  {board.title}
-                                </option>
-                              ))
-                            : null}
-                          <option value="board-new">
-                            Créer un nouveau tableau
+                        {userBoards.map(board => (
+                          <option value={board.id} key={`board-${board.id}`}>
+                            {board.title}
                           </option>
-                        </select>
-
-                        {showNewBoardInput && (
-                          <input
-                            type="text"
-                            name="newBoard"
-                            value={newBoard}
-                            onChange={this.onChange}
-                            placeholder="Titre du nouveau tableau"
-                            className={classnames("w-full p-3 my-2 rounded", {
-                              hidden: !showNewBoardInput,
-                              "border-red border-2": errors.board,
-                              "border-grey-dark border": !errors.board
-                            })}
-                          />
-                        )}
-                        {errors.board && (
-                          <span className="text-red text-sm italic">
-                            {errors.board}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* @Field title */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="title"
-                      className="block font-bold mb-1 text-lg"
-                    >
-                      Titre de la recette
+                        ))}
+                        <option value="board-new">
+                          Créer un nouveau tableau
+                        </option>
+                      </select>
+                      {showNewBoard && (
+                        <input
+                          type="text"
+                          name="newBoard"
+                          value={newBoard}
+                          onChange={this.onChange}
+                          placeholder="légumes colorés"
+                          className={classnames("w-full p-3 my-2 rounded", {
+                            "border-red border": errors.board,
+                            "border-grey-dark border": !errors.board
+                          })}
+                        />
+                      )}
+                      {errors.board && (
+                        <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
+                          {errors.board}
+                        </span>
+                      )}
                     </label>
+                  </div>
+                )}
+
+                {/* @field Title */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="title"
+                    className="block font-bold mb-1 text-lg"
+                  >
+                    Titre de la recette{" "}
                     <input
                       type="text"
                       name="title"
                       defaultValue={recipe.title}
                       ref={this.titleInput}
-                      placeholder="Risotto au poulet"
+                      placeholder="Risotto à la crevette"
                       className={classnames("w-full p-3 my-2 rounded", {
                         "border border-grey-dark": !errors.title,
-                        "border-red border-2": errors.title
+                        "border-red border": errors.title
                       })}
                     />
                     {errors.title && (
-                      <span className="text-red text-sm italic">
+                      <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
                         {errors.title}
                       </span>
                     )}
-                  </div>
+                  </label>
+                </div>
 
-                  {/* @field description */}
-                  <div className="mb-4  border-b border-grey-lighter">
-                    <label
-                      htmlFor="description"
-                      className="block font-bold mb-1 text-lg"
-                    >
-                      Description de la recette
-                    </label>
+                {/* @field Description */}
+                <div className="mb-4 border-b border-grey-lighter">
+                  <label
+                    htmlFor="description"
+                    className="block font-bold mb-4 text-lg"
+                  >
                     <textarea
-                      type="text"
                       name="description"
                       defaultValue={recipe.description}
                       ref={this.descriptionInput}
                       placeholder="Donnez un avant goût de votre recette, racontez son histoire"
                       className="w-full h-32 p-3 my-2 border border-grey-dark rounded resize-none"
                     />
-                  </div>
+                  </label>
+                </div>
 
-                  {/* @field Difficulty */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="difficulty"
-                      className="block font-bold mb-1 text-lg"
-                    >
-                      Difficulté
-                    </label>
-                    <i className="fas fa-chevron-down absolute pin-r mr-12 mt-6 text-grey-darker" />
+                {/* @field difficulty */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="difficulty"
+                    className="block font-bold mb-1 text-lg"
+                  >
+                    Difficulté{" "}
+                    <i className="fas fa-chevron-down absolute pin-r mr-12 mt-10 text-grey-darker" />
                     <select
                       name="difficulty"
                       className="w-full p-3 my-2 rounded bg-grey-light font-bold cursor-pointer appearance-none text-dark"
-                      defaultValue={recipe.difficulty}
                       ref={this.difficultyInput}
                     >
                       <option value="very-easy">Très facile</option>
@@ -429,198 +412,222 @@ class EditRecipe extends Component {
                       <option value="medium">Moyenne</option>
                       <option value="hard">Difficile</option>
                     </select>
-                  </div>
+                  </label>
+                </div>
 
-                  {/* @field Time */}
-                  <div className="mb-4">
-                    <label className="block font-bold mb-1 text-lg">
-                      Temps de préparation
-                    </label>
+                {/* @field time */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="time"
+                    className="block font-bold mb-1 text-lg"
+                  >
+                    <span className="mb-1 block">Temps de préparation</span>
                     <input
                       type="number"
+                      min="0"
                       name="hours"
                       defaultValue={recipe.time.hours}
                       ref={this.hoursInput}
-                      min={0}
                       placeholder="x"
                       className={classnames(
-                        "inline-block w-12 py-3 px-3 my-2 mr-2 rounded text-center border border-grey-dark",
+                        "inline-block w-12 py-3 px-3 my-2 mr-2 rounded text-center",
                         {
                           "border border-grey-dark": !errors.time,
-                          "border-red border-2": errors.time
+                          "border-red border": errors.time
                         }
                       )}
-                    />
-                    <span className={classnames({ "text-red": errors.time })}>
-                      heures
+                    />{" "}
+                    <span
+                      className={classnames("font-normal", {
+                        "text-red": errors.time
+                      })}
+                    >
+                      heures{" "}
                     </span>
-                    <br className="sm:hidden" />
                     <input
                       type="number"
+                      min="0"
                       name="minutes"
                       defaultValue={recipe.time.minutes}
                       ref={this.minutesInput}
-                      min={0}
                       placeholder="x"
                       className={classnames(
-                        "inline-block w-12 py-3 px-3 my-2 mr-2 sm:ml-2 rounded text-center border border-grey-dark",
+                        "inline-block w-12 py-3 px-3 my-2 mr-2 rounded text-center",
                         {
                           "border border-grey-dark": !errors.time,
-                          "border-red border-2": errors.time
+                          "border-red border": errors.time
                         }
                       )}
                     />
-                    <span className={classnames({ "text-red": errors.time })}>
+                    <span
+                      className={classnames("font-normal", {
+                        "text-red": errors.time
+                      })}
+                    >
                       minutes
                     </span>
                     {errors.time && (
-                      <div className="text-red text-sm italic">
+                      <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
                         {errors.time}
-                      </div>
+                      </span>
                     )}
-                  </div>
+                  </label>
+                </div>
 
-                  {/* @field quantity */}
-                  <div>
-                    <label
-                      htmlFor="quantity"
-                      className="block font-bold mb-1 text-lg"
-                    >
-                      Nombres de portions
-                    </label>
+                {/* @field quantity */}
+                <div className="mb-4 pb-4 border-b border-grey-lighter">
+                  <label
+                    htmlFor="quantity"
+                    className="block font-bold mb-1 text-lg"
+                  >
+                    <span className="mb-1 block">Nombres de portions</span>
 
                     <span
-                      className={classnames({ "text-red": errors.quantity })}
+                      className={classnames("font-normal", {
+                        "text-red": errors.time
+                      })}
                     >
                       Pour
                     </span>
                     <input
                       type="number"
                       name="quantity"
+                      min="0"
                       defaultValue={recipe.quantity}
                       ref={this.quantityInput}
                       placeholder="x"
                       className={classnames(
-                        "inline-block w-12 py-3 px-3 my-2 mx-2 rounded text-center ",
+                        "inline-block w-12 py-3 px-3 my-2 mx-2 rounded text-center",
                         {
-                          "border-red border-2": errors.quantity,
+                          "border-red border": errors.quantity,
                           "border border-grey-dark": !errors.quantity
                         }
                       )}
                     />
                     <span
-                      className={classnames({ "text-red": errors.quantity })}
+                      className={classnames("font-normal", {
+                        "text-red": errors.time
+                      })}
                     >
-                      personnes
+                      personne(s)
                     </span>
-                    {errors.quantity && (
-                      <div className="text-red text-sm italic">
-                        {errors.quantity}
-                      </div>
-                    )}
-                  </div>
+                  </label>
+                  {errors.quantity && (
+                    <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
+                      {errors.quantity}
+                    </span>
+                  )}
                 </div>
-              </div>
 
-              {/* @field ingredients */}
+                {/* @field ingredients */}
 
-              <AddList
-                title="Ingrédient(s)"
-                placeholder="1 cuillère à soupe de sucre"
-                labelButton="Ajouter un ingrédient"
-                items={recipe.ingredients}
-                update={this.updateIngredients}
-                error={errors.ingredients}
-              />
-
-              {/* @field ustensils */}
-              <AddList
-                title="Ustensile(s)"
-                placeholder="Micro-onde"
-                labelButton="Ajouter un ustensile"
-                items={recipe.ustensils}
-                update={this.updateUstensils}
-                error={errors.ustensils}
-              />
-
-              {/* @field steps */}
-              <AddList
-                step
-                title="Etapes de la préparation"
-                placeholder="Coupez les oignons"
-                labelButton="Ajouter une étape"
-                items={recipe.steps}
-                update={this.updateSteps}
-                error={errors.steps}
-              />
-
-              {/* @field keywords */}
-              <div className="mb-4 pt-8 px-4 md:px-8">
-                <label htmlFor="tag" className="block font-bold mb-2 text-lg">
-                  Mots clés
-                </label>
-                <div className="italic mb-4 text-sm">
-                  Séparez par des virgules.{" "}
-                  <span className="text-grey-dark">
-                    Exemple : poulet, entrée, risotto
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  name="keywords"
-                  defaultValue={recipe.keywords.join(", ")}
-                  ref={this.keywordsInput}
-                  placeholder="poulet, entrée, risotto"
-                  className="w-full p-3 my-2 border border-grey-dark rounded"
+                <AddList
+                  title="Ingrédient(s)"
+                  placeholder="1 cuillère à soupe de sucre"
+                  labelButton="Ajouter un ingrédient"
+                  items={recipe.ingredients}
+                  update={this.updateIngredients}
+                  error={errors.ingredients}
                 />
+
+                {/* @field ustensils */}
+                <AddList
+                  title="Ustensile(s)"
+                  placeholder="Micro-onde"
+                  labelButton="Ajouter un ustensile"
+                  items={recipe.ustensils}
+                  update={this.updateUstensils}
+                  error={errors.ustensils}
+                />
+
+                {/* @field steps */}
+                <AddList
+                  step
+                  title="Etapes de la préparation"
+                  placeholder="Coupez les oignons"
+                  labelButton="Ajouter une étape"
+                  items={recipe.steps}
+                  update={this.updateSteps}
+                  error={errors.steps}
+                />
+
+                {/* @field keywords */}
+                <div className="mb-4 pt-8">
+                  <label
+                    htmlFor="keywords"
+                    className="block font-bold mb-2 text-lg"
+                  >
+                    Mots clés{" "}
+                    <div className="font-normal italic mt-2 mb-4 text-sm">
+                      Séparez par des virgules.{" "}
+                      <span className="text-grey-dark">
+                        Exemple : poulet, entrée, risotto
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      name="keywords"
+                      defaultValue={
+                        recipe.keywords ? recipe.keywords.join(", ") : ""
+                      }
+                      ref={this.keywordsInput}
+                      placeholder="risotto, poulet, épinards, fondant"
+                      className="w-full p-3 my-2 border border-grey-dark rounded"
+                    />
+                  </label>
+                </div>
               </div>
             </ModalBody>
             <ModalFooter>
+              {/* @field submit */}
               <Link
                 to={`/recipe/delete/${recipe.id}`}
-                className="btn mr-2 no-underline"
+                className="btn mb-2 sm:mb-0 sm:mr-auto sm:mr-2 no-underline"
               >
-                Supprimer
+                Supprimer la recette
               </Link>
               <Link
                 to={`/recipe/${recipe.id}`}
-                className="btn ml-auto mr-2 no-underline"
+                className="btn mb-2 sm:mb-0 sm:ml-auto sm:mr-2 no-underline"
               >
                 Annuler
               </Link>
-              <button className="btn btn--accent cursor-pointer">
-                Enregistrer
-              </button>
+              <input
+                type="submit"
+                className="btn btn--accent cursor-pointer"
+                value="Enregistrer la recette"
+              />
             </ModalFooter>
           </Modal>
         </form>
       );
+    } else if (!recipe && !recipeExists) {
+      return <Page404 />;
     } else {
-      return null;
+      return (
+        <Modal>
+          <ModalHeader>Modifier une recette</ModalHeader>
+          <ModalBody>
+            <Spinner />
+          </ModalBody>
+        </Modal>
+      );
     }
   }
 }
 
-EditRecipe.propTypes = {
+EditRecipe.propTyps = {
   firestore: PropTypes.object.isRequired,
   firebase: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired,
-  profile: PropTypes.object,
-  recipe: PropTypes.object
+  auth: PropTypes.object,
+  profile: PropTypes.object
 };
 
 export default compose(
+  firestoreConnect(),
   firebaseConnect(),
-  firestoreConnect(props => [
-    {
-      collection: "recipes",
-      storeAs: "recipe",
-      doc: props.match.params.recipe
-    }
-  ]),
-  connect(({ firestore: { ordered }, firebase }, props) => ({
-    recipe: ordered.recipe && ordered.recipe[0],
-    auth: firebase.auth,
-    profile: firebase.profile
+  connect(({ firebase }) => ({
+    profile: firebase.profile,
+    auth: firebase.auth
   }))
 )(EditRecipe);

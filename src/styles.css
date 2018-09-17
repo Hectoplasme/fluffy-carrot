@@ -6442,6 +6442,10 @@ input[type="number"] {
   font-size: 4rem;
 }
 
+.text-8xl {
+  font-size: 6rem;
+}
+
 .italic {
   font-style: italic;
 }
@@ -12372,6 +12376,10 @@ input[type="number"] {
 
   .sm\:text-6xl {
     font-size: 4rem;
+  }
+
+  .sm\:text-8xl {
+    font-size: 6rem;
   }
 
   .sm\:italic {
@@ -18307,6 +18315,10 @@ input[type="number"] {
     font-size: 4rem;
   }
 
+  .md\:text-8xl {
+    font-size: 6rem;
+  }
+
   .md\:italic {
     font-style: italic;
   }
@@ -24240,6 +24252,10 @@ input[type="number"] {
     font-size: 4rem;
   }
 
+  .lg\:text-8xl {
+    font-size: 6rem;
+  }
+
   .lg\:italic {
     font-style: italic;
   }
@@ -30171,6 +30187,10 @@ input[type="number"] {
 
   .xl\:text-6xl {
     font-size: 4rem;
+  }
+
+  .xl\:text-8xl {
+    font-size: 6rem;
   }
 
   .xl\:italic {

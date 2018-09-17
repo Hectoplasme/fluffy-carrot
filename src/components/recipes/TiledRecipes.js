@@ -2,60 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
 
-//Redux
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
-
-//Data placeholder
-//@ To-do get recipes img url from user data
-const recipes = [
-  // {
-  //   id: "recipe-1",
-  //   title: "Pâtes à la carbonara",
-  //   imgUrl: "https://picsum.photos/200/300/?random",
-  //   height: 300,
-  //   width: 200
-  // },
-  // {
-  //   id: "recipe-2",
-  //   title: "Pâtes bolognaise",
-  //   imgUrl: "https://picsum.photos/500/500/?random",
-  //   height: 500,
-  //   width: 500
-  // },
-  // {
-  //   id: "recipe-3",
-  //   title: "Risotto au poulet",
-  //   imgUrl: "https://picsum.photos/300/400/?random",
-  //   height: 400,
-  //   width: 300
-  // },
-  // {
-  //   id: "recipe-4",
-  //   title: "Risotto aux champignons",
-  //   imgUrl: "https://picsum.photos/200/400/?random",
-  //   height: 400,
-  //   width: 200
-  // },
-  // {
-  //   id: "recipe-5",
-  //   title: "Pâtes à la carbonara",
-  //   imgUrl: "https://picsum.photos/200/300/?random",
-  //   height: 300,
-  //   width: 200
-  // }
-];
-
 class TiledRecipes extends Component {
-  constructor(props) {
-    super(props);
-
-    // this.state = {
-    //   imgUrl: this.getImgUrl()
-    // };
-  }
-
   getImgUrl = array => {
     let imgUrl = [];
 
@@ -175,19 +122,7 @@ class TiledRecipes extends Component {
 }
 
 TiledRecipes.propTypes = {
-  firestore: PropTypes.object.isRequired,
-  recipes: PropTypes.array,
-  userId: PropTypes.string
+  recipes: PropTypes.array
 };
 
-export default compose(
-  firestoreConnect(props => [
-    {
-      collection: "recipes",
-      where: [["user", "==", props.userId || ""]]
-    }
-  ]),
-  connect(({ firestore }) => ({
-    recipes: firestore.ordered.recipes
-  }))
-)(TiledRecipes);
+export default TiledRecipes;

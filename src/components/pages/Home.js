@@ -6,17 +6,25 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 
-//Component
+//Components
 import Recipes from "../recipes/Recipes";
-import Spinner from "../layout/Spinner";
 
 class Home extends Component {
   render() {
     const { recipes } = this.props;
     if (recipes) {
-      return <Recipes home recipes={recipes} />;
+      return (
+        <div>
+          {/* <h1>Recettes les plus récentes</h1> */}
+          <Recipes recipes={recipes} />
+        </div>
+      );
     } else {
-      return <Recipes recipes={[]} />;
+      return (
+        <div>
+          <Recipes />
+        </div>
+      );
     }
   }
 }
@@ -27,8 +35,8 @@ Home.propTypes = {
 };
 
 export default compose(
-  firestoreConnect([{ collection: "recipes" }]),
-  connect((state, props) => ({
-    recipes: state.firestore.ordered.recipes
+  firestoreConnect([{ collection: "recipes", limit: 30 }]),
+  connect(({ firestore }) => ({
+    recipes: firestore.ordered.recipes
   }))
 )(Home);

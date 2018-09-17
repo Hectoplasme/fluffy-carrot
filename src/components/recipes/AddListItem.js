@@ -14,7 +14,7 @@ class AddList extends Component {
     const { itemsFromParent } = state;
     const newState = {};
     if (items && !itemsFromParent) {
-      items.map((item, i) => {
+      items.forEach((item, i) => {
         newState[`item-${i + 1}`] = item;
       });
       //Return list to parent component state
@@ -109,7 +109,7 @@ class AddList extends Component {
 
     if (!step) {
       return (
-        <div className="pt-4 pb-8 px-4 md:px-8  border-b border-grey-lighter">
+        <div className="pt-4 pb-8 border-b border-grey-lighter">
           <label className="block font-bold mb-3 text-lg">{title}</label>
           {items.map((item, i) => {
             if (i !== 0 && item !== " ") {
@@ -145,7 +145,7 @@ class AddList extends Component {
               "inline-block w-full md:w-64 p-3 mb-2 mr-2 rounded",
               {
                 "border border-grey-dark": !error,
-                "border-red border-2": error
+                "border-red border": error
               }
             )}
           />
@@ -157,14 +157,18 @@ class AddList extends Component {
             <i className="fas fa-plus icon" />
             {labelButton}
           </button>
-          {error && <div className="text-red text-sm italic">{error}</div>}
+          {error && (
+            <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
+              {error}
+            </span>
+          )}
         </div>
       );
     } else {
       return (
         <div
           ref={ref => (this.stepContainer = ref)}
-          className="p-4 py-8 md:px-8 border-b border-grey-lighter"
+          className="py-8 border-b border-grey-lighter"
         >
           <label className="block font-bold mb-4 text-lg">{title}</label>
           <div className="mb-2">
@@ -225,12 +229,16 @@ class AddList extends Component {
                 "w-full h-32 p-3 my-2 rounded resize-none",
                 {
                   "border border-grey-dark": !error,
-                  "border-red border-2": error
+                  "border-red border": error
                 }
               )}
             />
           </div>
-          {error && <div className="text-red text-sm italic">{error}</div>}
+          {error && (
+            <span className="block my-1 p-4 font-normal rounded bg-red-lightest border border-red italic text-sm">
+              {error}
+            </span>
+          )}
           <button
             type="button"
             className="w-full sm:w-auto ml-auto block mt-2 font-bold btn"

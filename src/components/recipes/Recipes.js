@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import Masonry from "react-masonry-css";
-import classnames from "classnames";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import Masonry from "react-masonry-css";
+import classnames from "classnames";
 
+//Components
 import Recipe from "./Recipe";
 
 class Recipes extends Component {
@@ -17,11 +18,11 @@ class Recipes extends Component {
       500: 1
     };
 
-    const { recipes, thin, add, home } = this.props;
+    const { recipes, thin, add } = this.props;
 
     const AddButton = (
       <Link
-        to="/add"
+        to={{ pathname: "/recipe/add", state: { modal: true } }}
         className="group block w-full p-4 m-2 after:bg-grey-light no-underline"
       >
         <div className="flex items-center justify-center h-48 sm:h-96 bg-grey-lighter rounded-lg text-purple group-hover:text-purple-dark">
@@ -33,8 +34,8 @@ class Recipes extends Component {
       </Link>
     );
 
-    if (add && recipes) {
-      recipes.unshift("");
+    if (add && recipes && recipes[0] !== "add") {
+      recipes.unshift("add");
     }
 
     if (recipes && recipes.length > 0) {
@@ -49,24 +50,20 @@ class Recipes extends Component {
             "-ml-4 mr-4": thin
           })}
         >
-          {recipes.map((item, i) => {
-            if (add && i === 0) {
-              return AddButton;
+          {recipes.map((recipe, i) => {
+            if (recipe === "add") {
+              return <div key="add-recipe">{AddButton}</div>;
             } else {
-              return (
-                <Recipe
-                  key={item.id}
-                  id={item.id}
-                  imgUrl={item.imgUrl}
-                  title={item.title}
-                />
-              );
+              return <Recipe key={recipe.id} recipe={recipe} />;
             }
           })}
         </Masonry>
       );
+    } else if (recipes && recipes.length === 0) {
+      // @todo add style
+      return <div>Pas de recettes...</div>;
     } else {
-      // placeholder
+      //@placeholder loading recipes
       return (
         <Masonry
           breakpointCols={breakpointColumnsObj}
@@ -86,15 +83,15 @@ class Recipes extends Component {
           <Recipe />
           <Recipe />
           <Recipe />
-          <Recipe />
         </Masonry>
       );
     }
   }
 }
 
-Recipes.proptypes = {
-  recipes: PropTypes.array
+Recipes.propTypes = {
+  recipes: PropTypes.array,
+  add: PropTypes.bool
 };
 
 export default Recipes;
