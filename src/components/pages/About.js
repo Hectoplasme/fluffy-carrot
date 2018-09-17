@@ -18,6 +18,7 @@ class About extends Component {
           <a
             href="http://github.com"
             target="_blank"
+            rel="noopener noreferrer"
             className="btn-floating btn-floating--accent mr-2"
           >
             <i className="fab fa-github icon" />
@@ -25,6 +26,7 @@ class About extends Component {
           <a
             href="http://laurianneterrier.com"
             target="_blank"
+            rel="noopener noreferrer"
             className="btn-floating btn-floating--accent mr-2"
           >
             <i className="fas fa-globe icon" />
@@ -32,6 +34,7 @@ class About extends Component {
           <a
             href="http://laurianneterrier.tumblr.com"
             target="_blank"
+            rel="noopener noreferrer"
             className="btn-floating btn-floating--accent mr-2"
           >
             <i className="fab fa-tumblr icon" />

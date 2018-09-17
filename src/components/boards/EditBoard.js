@@ -112,7 +112,7 @@ class EditBoard extends Component {
                   defaultValue={board.title}
                   ref={this.titleInput}
                   className={classnames("w-full p-3 my-2 rounded", {
-                    "border-red border-2": error,
+                    "border-red border": error,
                     "border-grey-dark border": !error
                   })}
                 />

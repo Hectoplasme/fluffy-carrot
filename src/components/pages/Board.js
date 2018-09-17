@@ -154,8 +154,8 @@ class Board extends Component {
             </div>
             <div className="flex items-center justify-between">
               <div className="w-4/5 pr-4">
-                <h1 className="mb-2 w-full bg-grey-light h-12" />
-                <h1 className="mb-2 max-w-100 w-64 bg-grey-light h-12" />
+                <div className="mb-2 w-full bg-grey-light h-12" />
+                <div className="mb-2 max-w-100 w-64 bg-grey-light h-12" />
                 <p className="h-4 bg-grey w-32" />
               </div>
               <div

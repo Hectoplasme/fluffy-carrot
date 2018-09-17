@@ -51,7 +51,7 @@ class Board extends Component {
 
     if (board) {
       return (
-        <div className="group">
+        <div className="group -ml-2  md:pr-2">
           <Link
             to={`/${board.author}/board/${board.id}`}
             className="block relative w-full p-3 no-underline text-black after:bg-grey-light"

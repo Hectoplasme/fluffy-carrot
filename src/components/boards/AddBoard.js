@@ -74,7 +74,7 @@ class AddBoard extends Component {
                     onChange={this.onChange}
                     placeholder="desserts fruités"
                     className={classnames("w-full p-3 my-2 rounded", {
-                      "border-red border-2": error,
+                      "border-red border": error,
                       "border-grey-dark border": !error
                     })}
                   />

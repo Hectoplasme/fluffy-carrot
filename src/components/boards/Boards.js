@@ -12,14 +12,14 @@ class Boards extends Component {
 
     const AddButton = (
       <div
-        className={classnames("inline-block relative w-full pr-2 ", {
+        className={classnames("inline-block -ml-2 relative w-full md:pr-2", {
           "md:w-1/2 lg:w-1/3 xl:w-1/4 ": !thin,
           "lg:w-1/2": thin
         })}
       >
         <Link
           to="/board/add"
-          className="group block w-full p-4 after:bg-grey-light no-underline"
+          className="group block w-full p-3 after:bg-grey-light no-underline"
         >
           <div className="flex items-center justify-center h-64 bg-grey-lighter rounded-lg text-purple group-hover:text-purple-dark">
             <i className="fas fa-plus-circle text-5xl" />
