@@ -53,6 +53,13 @@ class Recipes extends Component {
           {recipes.map((recipe, i) => {
             if (recipe === "add") {
               return <div key="add-recipe">{AddButton}</div>;
+            } else if (
+              recipes.findIndex(
+                checkRecipe => checkRecipe.imgUrl === recipe.imgUrl
+              ) != i
+            ) {
+              //Check for duplicates
+              return null;
             } else {
               return <Recipe key={recipe.id} recipe={recipe} />;
             }

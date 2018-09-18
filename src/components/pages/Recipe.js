@@ -35,7 +35,7 @@ class Recipe extends Component {
       firestore
         .get({ collection: "recipes", doc: nextProps.match.params.recipeId })
         .then(res => {
-          this.updateRecipe(res, nextProps.match.params.recipeId, true);
+          this.updateRecipe(res, true);
         });
     }
   }
@@ -49,14 +49,14 @@ class Recipe extends Component {
       firestore
         .get({ collection: "recipes", doc: this.props.match.params.recipeId })
         .then(res => {
-          this.updateRecipe(res, res.id, false);
+          this.updateRecipe(res, false);
         });
     }
 
     //get the recipe and listen the change
     firestore.setListener(
       { collection: "recipes", doc: this.props.match.params.recipeId },
-      res => this.updateRecipe(res, res.id, false)
+      res => this.updateRecipe(res, false)
     );
   }
 
@@ -65,15 +65,15 @@ class Recipe extends Component {
 
     firestore.unsetListener(
       { collection: "recipes", doc: this.props.match.params.recipeId },
-      res => this.updateRecipe(res, res.id, false)
+      res => this.updateRecipe(res, false)
     );
   }
 
-  updateRecipe = (res, recipeId, updating) => {
+  updateRecipe = (res, updating) => {
     if (res.data()) {
       this.fetchBoard(res.data().board);
       this.fetchUser(res.data().user);
-      this.findRecipes(res.data().keywords, recipeId, updating);
+      this.findRecipes(res.data().keywords, res, updating);
       this.setState({ recipe: { id: res.id, ...res.data() } });
     } else {
       this.setState({ recipeExists: false });
@@ -108,7 +108,7 @@ class Recipe extends Component {
       });
   };
 
-  findRecipes(keywords, recipeId, updating) {
+  findRecipes(keywords, recipeRes, updating) {
     const { firestore } = this.props;
     const { moreRecipes } = this.state;
     let isUpdating = updating;
@@ -125,9 +125,10 @@ class Recipe extends Component {
               res.docs.forEach(doc => {
                 if (
                   this.state.moreRecipes.find(recipe => recipe.id === doc.id) ||
-                  doc.id === recipeId
+                  doc.id === recipeRes.id ||
+                  doc.data().imgUrl === recipeRes.data().imgUrl
                 ) {
-                  // console.log(doc.id);
+                  // console.log(Don't show the recipe);
                 } else {
                   if (isUpdating) {
                     isUpdating = false;
@@ -149,7 +150,7 @@ class Recipe extends Component {
       }
     });
 
-    console.log(keywords);
+    // console.log(keywords);
   }
 
   render() {
@@ -217,7 +218,8 @@ class Recipe extends Component {
                         to={`/${user.slug}`}
                         className="flex-no-shrink h-12 w-12 sm:h-16 sm:w-16 mr-2 md:mr-4 rounded-full bg-grey-light"
                         style={{
-                          background: `#dae1e7 url(${user.avatar})`,
+                          background: "#dae1e7",
+                          backgroundImage: ` url(${user.avatar})`,
                           backgroundSize: "cover"
                         }}
                       />

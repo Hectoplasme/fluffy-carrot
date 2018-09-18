@@ -53,7 +53,7 @@ class AddRecipe extends Component {
             });
           });
           this.setState({
-            board: userBoards[0] ? userBoards[0].id : "new-board",
+            board: userBoards[0] ? userBoards[0].id : "board-new",
             showNewBoard: userBoards[0] ? false : true,
             userBoards,
             userBoardsLoaded: true
@@ -185,7 +185,7 @@ class AddRecipe extends Component {
       keywords: keywords.split(/,\s?/).filter(item => item !== "")
     };
 
-    if (board === "new-board") {
+    if (board === "board-new") {
       //If the board doesn't exist yet
       //add the board
       firestore

@@ -19,7 +19,8 @@ class UserHeader extends Component {
             <div
               className="sm:inline-block h-32 w-32 rounded-full border-4 border-white mx-auto sm:h-48 sm:w-48 sm:border-8"
               style={{
-                background: `#efefef url(${avatar})`,
+                background: `#efefef`,
+                backgroundImage: `url(${avatar})`,
                 backgroundSize: "cover"
               }}
             />

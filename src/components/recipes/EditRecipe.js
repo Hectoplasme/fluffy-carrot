@@ -68,7 +68,7 @@ class EditRecipe extends Component {
           });
           this.setState({
             board: userBoards[0] ? userBoards[0].id : "board-new",
-            showNewBoard: false,
+            showNewBoard: userBoards[0] ? false : true,
             userBoards,
             userBoardsLoaded: true
           });
