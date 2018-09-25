@@ -9,7 +9,6 @@ import { connect } from "react-redux";
 import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 
 //Components
-import Page404 from "../pages/404";
 import { Modal, ModalHeader, ModalFooter, ModalBody } from "../layout/Modal";
 import Spinner from "../layout/Spinner";
 

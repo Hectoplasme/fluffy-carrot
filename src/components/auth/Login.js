@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 //Redux
 import { firebaseConnect } from "react-redux-firebase";
@@ -138,6 +138,17 @@ class Login extends Component {
               value="Se connecter"
               className="mt-4 btn btn--accent w-full cursor-pointer"
             />
+            <div className="text-xs mt-4 text-grey-darker leading-normal text-right">
+              <div>
+                Pour tester l'application, vous pouvez vous connecter avec les
+                identifiants suivants:{" "}
+              </div>
+              <div>
+                <span className="font-bold">Email : </span>
+                test@test.fr <span className="font-bold">Mot de passe : </span>
+                test123
+              </div>
+            </div>
           </ModalBody>
         </Modal>
       </form>

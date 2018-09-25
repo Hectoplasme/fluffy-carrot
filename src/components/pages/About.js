@@ -20,7 +20,7 @@ class About extends Component {
           .<br />
           <br />
           Sinon, lorsque je ne code pas, je joue du piano ou je dessine. Vous
-          pouvez me retrouvez sur{" "}
+          pouvez me retrouver sur{" "}
           <a
             href="http://laurianneterrier.com"
             target="_blank"

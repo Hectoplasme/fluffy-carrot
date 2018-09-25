@@ -2,6 +2,7 @@
   "name": "fluffy-cookie",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://fluffy-cookie.firebaseapp.com/",
   "dependencies": {
     "classnames": "^2.2.6",
     "firebase": "^5.4.2",
@@ -20,6 +21,7 @@
   },
   "scripts": {
     "tailwind:css": "tailwind build ./tailwind/styles.src.css -c  ./tailwind/config.js -o ./src/styles.css",
+    "deploy": "yarn build && firebase deploy",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
